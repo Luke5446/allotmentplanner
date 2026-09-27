@@ -5,19 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Allotment Planner</title>
 <style>
-:root{--bg:#f5f3ec;--card:#fff;--ink:#1f2a1f;--muted:#6b7565;--line:#e2ddd0;--green:#3f7d3a;--green-soft:#e2efde;--amber:#a86b12;--amber-soft:#fbefd8;--red:#b4452f;--red-soft:#f8e2dc;--blue:#2f6690;--blue-soft:#dde9f3;--brown:#8a5a2b;--brown-soft:#f0e5d8;--purple:#7b3fa0;--purple-soft:#eee2f6;--orange:#d9700e;--orange-soft:#fde8d3;--h1:#3a7a36;--h2:#5c9a4a}
-@media (prefers-color-scheme:dark){:root{--bg:#131712;--card:#1c221b;--ink:#e6eadf;--muted:#9aa393;--line:#2e362c;--green:#82c477;--green-soft:#223222;--amber:#e3ac4c;--amber-soft:#332916;--red:#e3806a;--red-soft:#3a211c;--blue:#7fb2e2;--blue-soft:#1a2937;--brown:#cc9e70;--brown-soft:#2e2419;--purple:#c39ae6;--purple-soft:#2c2136;--orange:#f3a04a;--orange-soft:#3a2711}}
-/* seasonal banner – follows the month being viewed */
-body[data-season=winter]{--h1:#2e4a66;--h2:#4c6f8f}
-body[data-season=spring]{--h1:#3a7a36;--h2:#5c9a4a}
-body[data-season=summer]{--h1:#2c6e3f;--h2:#9a7a1e}
-body[data-season=autumn]{--h1:#7a3612;--h2:#b0561a}
-@media (prefers-color-scheme:dark){body[data-season=winter]{--h1:#182a3d;--h2:#2b4661}body[data-season=spring]{--h1:#1f4a22;--h2:#356b33}body[data-season=summer]{--h1:#18422a;--h2:#5e4a12}body[data-season=autumn]{--h1:#4a1f0c;--h2:#7a3a12}}
+:root{--bg:#f5f3ec;--card:#fff;--ink:#1f2a1f;--muted:#6b7565;--line:#e2ddd0;--green:#3f7d3a;--green-soft:#e2efde;--amber:#a86b12;--amber-soft:#fbefd8;--red:#b4452f;--red-soft:#f8e2dc;--blue:#2f6690;--blue-soft:#dde9f3;--brown:#8a5a2b;--brown-soft:#f0e5d8;--purple:#7b3fa0;--purple-soft:#eee2f6;--orange:#d9700e;--orange-soft:#fde8d3;--c-in:#1ea7ea;--c-out:#18c33a;--c-h:#ff6a00;--h1:#3a7a36}
+@media (prefers-color-scheme:dark){:root{--bg:#131712;--card:#1c221b;--ink:#e6eadf;--muted:#9aa393;--line:#2e362c;--green:#82c477;--green-soft:#223222;--amber:#e3ac4c;--amber-soft:#332916;--red:#e3806a;--red-soft:#3a211c;--blue:#7fb2e2;--blue-soft:#1a2937;--brown:#cc9e70;--brown-soft:#2e2419;--purple:#c39ae6;--purple-soft:#2c2136;--orange:#f3a04a;--orange-soft:#3a2711;--c-in:#4fc6ff;--c-out:#3ae85c;--c-h:#ff8a1f}}
+/* seasonal banner – painted scene follows the month being viewed */
+body[data-season=winter]{--h1:#5f7f9f;--scene:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 180' preserveAspectRatio='xMidYMax slice'%3E%3Cdefs%3E%3ClinearGradient id='s' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%235f7f9f'/%3E%3Cstop offset='1' stop-color='%23c4d4e3'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='900' height='180' fill='url(%23s)'/%3E%3Cellipse cx='120' cy='215' rx='430' ry='75' fill='%23dfe7ef'/%3E%3Cellipse cx='720' cy='225' rx='520' ry='85' fill='%23f3f7fb'/%3E%3Cg stroke='%233d3128' stroke-linecap='round' fill='none'%3E%3Cpath d='M650 172V96' stroke-width='6'/%3E%3Cpath d='M650 132L618 104M618 104L604 88M618 104L608 112M650 118L684 86M684 86L700 72M684 86L698 92M650 144L632 130M632 130L620 132M650 108L642 92M650 124L668 110M668 110L676 98' stroke-width='3.5'/%3E%3C/g%3E%3Cg fill='%23fff'%3E%3Cellipse cx='650' cy='96' rx='4' ry='2'/%3E%3Cellipse cx='618' cy='104' rx='4' ry='2'/%3E%3Cellipse cx='684' cy='86' rx='4' ry='2'/%3E%3C/g%3E%3Cg fill='%23fff' opacity='.9'%3E%3Ccircle cx='80' cy='30' r='3'/%3E%3Ccircle cx='200' cy='72' r='2'/%3E%3Ccircle cx='330' cy='24' r='2.5'/%3E%3Ccircle cx='450' cy='62' r='2'/%3E%3Ccircle cx='560' cy='20' r='3'/%3E%3Ccircle cx='640' cy='78' r='2'/%3E%3Ccircle cx='120' cy='112' r='2'/%3E%3Ccircle cx='390' cy='122' r='2.5'/%3E%3Ccircle cx='845' cy='40' r='2.5'/%3E%3Ccircle cx='520' cy='108' r='2'/%3E%3Ccircle cx='260' cy='140' r='2'/%3E%3Ccircle cx='700' cy='130' r='2.5'/%3E%3C/g%3E%3C/svg%3E")}
+body[data-season=spring]{--h1:#4a9fe0;--scene:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 180' preserveAspectRatio='xMidYMax slice'%3E%3Cdefs%3E%3ClinearGradient id='s' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%234a9fe0'/%3E%3Cstop offset='1' stop-color='%23c2e6ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='900' height='180' fill='url(%23s)'/%3E%3Cg fill='%23fff' opacity='.85'%3E%3Cellipse cx='150' cy='45' rx='42' ry='14'/%3E%3Cellipse cx='175' cy='38' rx='30' ry='12'/%3E%3Cellipse cx='560' cy='30' rx='50' ry='15'/%3E%3Cellipse cx='590' cy='24' rx='34' ry='12'/%3E%3C/g%3E%3Cellipse cx='200' cy='225' rx='480' ry='80' fill='%236db65a'/%3E%3Cellipse cx='760' cy='230' rx='500' ry='85' fill='%238bcc6a'/%3E%3Cpath d='M650 172V120' stroke='%235a3f2a' stroke-width='6' stroke-linecap='round'/%3E%3Cg fill='%23f7b3c9'%3E%3Ccircle cx='650' cy='105' r='30'/%3E%3Ccircle cx='620' cy='118' r='20'/%3E%3Ccircle cx='680' cy='115' r='22'/%3E%3Ccircle cx='640' cy='85' r='16'/%3E%3Ccircle cx='670' cy='90' r='14'/%3E%3C/g%3E%3Cg fill='%23fbd1de'%3E%3Ccircle cx='636' cy='100' r='5'/%3E%3Ccircle cx='664' cy='108' r='5'/%3E%3Ccircle cx='652' cy='84' r='4'/%3E%3C/g%3E%3Cg stroke='%233f8f3a' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M120 175v-22M160 178v-20M200 176v-24M240 178v-18'/%3E%3C/g%3E%3Cg%3E%3Cellipse cx='120' cy='150' rx='6' ry='9' fill='%23e63946'/%3E%3Cellipse cx='160' cy='155' rx='6' ry='9' fill='%23ffd23f'/%3E%3Cellipse cx='200' cy='149' rx='6' ry='9' fill='%23e63946'/%3E%3Cellipse cx='240' cy='157' rx='6' ry='9' fill='%23ffb703'/%3E%3C/g%3E%3C/svg%3E")}
+body[data-season=summer]{--h1:#2f8be0;--scene:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 180' preserveAspectRatio='xMidYMax slice'%3E%3Cdefs%3E%3ClinearGradient id='s' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%232f8be0'/%3E%3Cstop offset='1' stop-color='%23aee0ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='900' height='180' fill='url(%23s)'/%3E%3Ccircle cx='640' cy='42' r='44' fill='%23ffe066' opacity='.5'/%3E%3Ccircle cx='640' cy='42' r='28' fill='%23ffd93b'/%3E%3Cg fill='%23fff' opacity='.8'%3E%3Cellipse cx='260' cy='40' rx='48' ry='14'/%3E%3Cellipse cx='290' cy='32' rx='32' ry='12'/%3E%3C/g%3E%3Cellipse cx='650' cy='225' rx='520' ry='85' fill='%23e2bd4a'/%3E%3Cellipse cx='120' cy='232' rx='430' ry='80' fill='%235aa83c'/%3E%3Cg stroke='%23c99a2e' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M560 172v-30M590 174v-34M620 172v-30M650 176v-36M680 172v-30M710 175v-32'/%3E%3C/g%3E%3Cg fill='%23e9c84f'%3E%3Cellipse cx='560' cy='140' rx='3' ry='8'/%3E%3Cellipse cx='590' cy='138' rx='3' ry='8'/%3E%3Cellipse cx='620' cy='140' rx='3' ry='8'/%3E%3Cellipse cx='650' cy='138' rx='3' ry='8'/%3E%3Cellipse cx='680' cy='140' rx='3' ry='8'/%3E%3Cellipse cx='710' cy='141' rx='3' ry='8'/%3E%3C/g%3E%3Cg fill='%23333' opacity='.6'%3E%3Cpath d='M380 60q6-6 12 0q6-6 12 0' stroke='%23333' stroke-width='2' fill='none'/%3E%3Cpath d='M430 45q5-5 10 0q5-5 10 0' stroke='%23333' stroke-width='2' fill='none'/%3E%3C/g%3E%3C/svg%3E")}
+body[data-season=autumn]{--h1:#d9823a;--scene:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 900 180' preserveAspectRatio='xMidYMax slice'%3E%3Cdefs%3E%3ClinearGradient id='s' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23d9823a'/%3E%3Cstop offset='1' stop-color='%23f6d6a6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='900' height='180' fill='url(%23s)'/%3E%3Cellipse cx='150' cy='222' rx='450' ry='78' fill='%23a86a2c'/%3E%3Cellipse cx='720' cy='230' rx='520' ry='85' fill='%237d4a1c'/%3E%3Cpath d='M650 172V112' stroke='%234a3320' stroke-width='7' stroke-linecap='round'/%3E%3Cg%3E%3Ccircle cx='650' cy='95' r='34' fill='%23e2711d'/%3E%3Ccircle cx='617' cy='112' r='22' fill='%23c9462b'/%3E%3Ccircle cx='683' cy='108' r='24' fill='%23f0a030'/%3E%3Ccircle cx='640' cy='72' r='18' fill='%23f3b23b'/%3E%3Ccircle cx='670' cy='78' r='15' fill='%23d95f2b'/%3E%3C/g%3E%3Cg%3E%3Cellipse cx='90' cy='60' rx='7' ry='4' fill='%23e2711d' transform='rotate(-30 90 60)'/%3E%3Cellipse cx='210' cy='110' rx='7' ry='4' fill='%23c9462b' transform='rotate(20 210 110)'/%3E%3Cellipse cx='340' cy='50' rx='7' ry='4' fill='%23f0a030' transform='rotate(-50 340 50)'/%3E%3Cellipse cx='470' cy='130' rx='7' ry='4' fill='%23e2711d' transform='rotate(35 470 130)'/%3E%3Cellipse cx='560' cy='70' rx='7' ry='4' fill='%23c9462b' transform='rotate(-15 560 70)'/%3E%3Cellipse cx='640' cy='140' rx='7' ry='4' fill='%23f3b23b' transform='rotate(60 640 140)'/%3E%3Cellipse cx='400' cy='95' rx='7' ry='4' fill='%23d95f2b' transform='rotate(-70 400 95)'/%3E%3C/g%3E%3C/svg%3E")}
+header::before{content:'';position:absolute;inset:0;background:var(--h1) var(--scene) center bottom/cover no-repeat;transition:opacity .4s}
+header::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,rgba(8,16,10,.66) 0,rgba(8,16,10,.42) 55%,rgba(8,16,10,.18) 100%)}
+@media (prefers-color-scheme:dark){header::before{filter:brightness(.62) saturate(.85)}header::after{background:linear-gradient(100deg,rgba(0,0,0,.6) 0,rgba(0,0,0,.4) 55%,rgba(0,0,0,.25) 100%)}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{background:linear-gradient(120deg,var(--h1),var(--h2));color:#fff;padding:14px 16px 0;position:relative;overflow:hidden;text-shadow:0 1px 2px rgba(0,0,0,.25);transition:background .5s}
-header .wrap{position:relative}
-header .season{position:absolute;right:-4px;top:-14px;font-size:110px;line-height:1;opacity:.18;pointer-events:none;text-shadow:none;user-select:none}
+header{background:var(--h1);color:#fff;padding:14px 16px 0;position:relative;overflow:hidden;text-shadow:0 1px 3px rgba(0,0,0,.55)}
+header .wrap{position:relative;z-index:1}
 header .sname{font-size:12px;background:rgba(255,255,255,.18);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle}
 .wrap{max-width:960px;margin:0 auto}
 h1{margin:0;font-size:20px}
@@ -73,12 +74,13 @@ table.cal{border-collapse:collapse;width:100%;min-width:640px;font-size:13px}
 .cal th:first-child,.cal td:first-child{text-align:left;padding-left:0;white-space:nowrap}
 .cal .cur{background:var(--green-soft)}
 .bars{display:flex;flex-direction:column;gap:2px;min-height:14px;justify-content:center}
-.bars i{display:block;height:5px;border-radius:3px}
-.i-in{background:var(--blue)}.i-out{background:var(--green)}.i-pl{background:var(--purple)}.i-h{background:var(--orange)}
+.bars i{display:block;height:7px;border-radius:3px}
+.i-in{background:var(--c-in)}.i-out{background:var(--c-out)}.i-h{background:var(--c-h)}
+.i-pl{background:repeating-linear-gradient(90deg,var(--c-in) 0 4px,var(--c-out) 4px 8px)}
 .legend{display:flex;gap:6px;flex-wrap:wrap;font-size:13px;margin-bottom:8px}
 .legend button{background:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
-.legend button.off{opacity:.45;text-decoration:line-through}
-.legend i{display:inline-block;width:14px;height:6px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.legend button.on{border-color:var(--green);background:var(--green-soft);font-weight:600}
+.legend i{display:inline-block;width:16px;height:7px;border-radius:3px;margin-right:5px;vertical-align:middle}
 .segs{display:inline-flex;border:1px solid var(--green);border-radius:8px;overflow:hidden;margin-bottom:10px}
 .segs button{background:none;border:0;color:var(--green);padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
 .segs button.on{background:var(--green);color:#fff}
@@ -114,7 +116,6 @@ details summary{cursor:pointer;color:var(--muted);font-size:14px}
 </head>
 <body>
 <header><div class="wrap">
-  <span class="season" id="seasonIcon" aria-hidden="true"></span>
   <h1>🌱 Allotment Planner <span class="sname" id="seasonName"></span></h1>
   <div class="sub">Manchester · light/loam soil · last frost ~mid-May, first frost ~late Oct</div>
   <div class="monthnav">
@@ -333,9 +334,9 @@ function load(){try{const s=localStorage.getItem(LS);if(s){const o=JSON.parse(s)
 function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
 let S=load()||defaults();save();
 const _t=new Date();
-let view={y:_t.getFullYear(),m:_t.getMonth()+1,tab:'month',calMode:'month',types:{in:true,out:true,pl:true,h:true},q:'',focus:null};
+let view={y:_t.getFullYear(),m:_t.getMonth()+1,tab:'month',calMode:'month',type:null,q:'',focus:null};
 const season=m=>(m===12||m<=2)?'winter':m<=5?'spring':m<=8?'summer':'autumn';
-const SEASON={winter:['❄️','Winter'],spring:['🌷','Spring'],summer:['☀️','Summer'],autumn:['🍂','Autumn']};
+const SEASON={winter:['❄️','Winter'],spring:['🌱','Spring'],summer:['☀️','Summer'],autumn:['🍂','Autumn']};
 
 /* ---------- helpers ---------- */
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -462,14 +463,14 @@ function rTrees(){
 function isDoneNow(t){const last=lastDone(t.id);return last&&(today()-last)/864e5<t.m.length*31+10;}
 const TYPES=[['in','Sow under cover','Under cover','cover'],['out','Sow outdoors','Outdoors','sown'],['pl','Plant out','Plant out','planted'],['h','Harvest / in flower','Harvest','']];
 function rCal(){
- const T=view.types,on=k=>!!T[k];
+ const on=k=>!view.type||view.type===k;
  const act=(c,m)=>({in:has(c.in,m),out:has(c.out,m),pl:has(c.pl,m),h:has(c.h,m)});
  const anyOn=a=>TYPES.some(([k])=>on(k)&&a[k]);
  const year=view.calMode==='year';
  const head=`<div class="card"><h2>Year calendar</h2>
  <div class="segs"><button data-act="calmode" data-mode="month" class="${year?'':'on'}">${MONTH_FULL[view.m-1]}</button><button data-act="calmode" data-mode="year" class="${year?'on':''}">12 months</button></div>
- <div class="legend">${TYPES.map(([k,l])=>`<button data-act="ctype" data-type="${k}" class="${on(k)?'':'off'}" aria-pressed="${on(k)}"><i class="i-${k}"></i>${l}</button>`).join('')}</div>
- <div class="note" style="margin-bottom:8px">Tap a legend item to show or hide it. Crops are grouped by family, A–Z. All want full sun unless marked ⛅ (fine in part shade).</div>
+ <div class="legend">${TYPES.map(([k,l])=>`<button data-act="ctype" data-type="${k}" class="${view.type===k?'on':''}" aria-pressed="${view.type===k}"><i class="i-${k}"></i>${l}</button>`).join('')}</div>
+ <div class="note" style="margin-bottom:8px">Tap a legend item to show only that; tap it again for everything. Crops are grouped by family, A–Z. All want full sun unless marked ⛅ (fine in part shade).</div>
  <input id="calSearch" placeholder="Filter crops…" value="${esc(view.q)}" style="margin-bottom:10px">`;
  const grp=g=>`<tr class="grp" data-grp="1"><td colspan="${year?13:6}">${esc(g)}</td></tr>`;
  const rowName=c=>esc((c.n+' '+c.f).toLowerCase());
@@ -512,7 +513,7 @@ function rMore(){
 function render(){
  document.getElementById('mlabel').textContent=MONTH_FULL[view.m-1]+' '+view.y;
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===view.tab));
- const sn=season(view.m);document.body.dataset.season=sn;document.getElementById('seasonIcon').textContent=SEASON[sn][0];document.getElementById('seasonName').textContent=SEASON[sn][1];
+ const sn=season(view.m);document.body.dataset.season=sn;document.getElementById('seasonName').textContent=SEASON[sn][0]+' '+SEASON[sn][1];
  const f={month:rMonth,plot:rPlot,trees:rTrees,cal:rCal,comp:rComp,more:rMore}[view.tab];
  document.getElementById('main').innerHTML=f();
  const cs=document.getElementById('calSearch');
@@ -577,7 +578,7 @@ document.addEventListener('click',ev=>{
   case 'tab':view.tab=b.dataset.tab;break;
   case 'focus':view.focus=view.focus===b.dataset.f?null:b.dataset.f;break;
   case 'calmode':view.calMode=b.dataset.mode;break;
-  case 'ctype':view.types[b.dataset.type]=!view.types[b.dataset.type];break;
+  case 'ctype':view.type=view.type===b.dataset.type?null:b.dataset.type;break;
   case 'log':openModal(null,b.dataset.crop,b.dataset.method);return;
   case 'edit':openModal(entry);return;
   case 'mclose':closeModal();return;
