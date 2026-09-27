@@ -1,0 +1,125 @@
+{
+ "log": [
+  {
+   "id": "xfimwb7",
+   "crop": "turnip",
+   "date": "2026-09-05",
+   "method": "sown",
+   "bed": "",
+   "note": "",
+   "status": "growing"
+  },
+  {
+   "id": "ezbgrfb",
+   "crop": "radish",
+   "date": "2026-09-05",
+   "method": "sown",
+   "bed": "",
+   "note": "",
+   "status": "growing"
+  },
+  {
+   "id": "w8ifyzo",
+   "crop": "lettuce",
+   "date": "2026-09-05",
+   "method": "sown",
+   "bed": "",
+   "note": "Red Italian",
+   "status": "growing"
+  },
+  {
+   "id": "3qbg54k",
+   "crop": "spring-onion",
+   "date": "2026-09-05",
+   "method": "sown",
+   "bed": "",
+   "note": "",
+   "status": "growing"
+  },
+  {
+   "id": "cnv7wse",
+   "crop": "pak-choi",
+   "date": "2026-09-05",
+   "method": "sown",
+   "bed": "",
+   "note": "",
+   "status": "growing"
+  },
+  {
+   "id": "ywahhhm",
+   "crop": "winter-spinach",
+   "date": "2026-09-12",
+   "method": "sown",
+   "bed": "",
+   "note": "",
+   "status": "growing"
+  },
+  {
+   "id": "eaye2p1",
+   "crop": "winter-cabbage",
+   "date": "2026-09-12",
+   "method": "planted",
+   "bed": "",
+   "note": "",
+   "status": "growing"
+  },
+  {
+   "id": "qs3h8pw",
+   "crop": "psb",
+   "date": "2026-09-12",
+   "method": "planted",
+   "bed": "",
+   "note": "",
+   "status": "growing"
+  }
+ ],
+ "trees": [
+  {
+   "id": "t-cook",
+   "name": "Cooking apple",
+   "type": "cooking",
+   "count": 1
+  },
+  {
+   "id": "t-eat",
+   "name": "Eating apples",
+   "type": "apple",
+   "count": 3
+  },
+  {
+   "id": "t-cherry",
+   "name": "Cherries",
+   "type": "cherry",
+   "count": 2
+  },
+  {
+   "id": "t-damson",
+   "name": "Damsons",
+   "type": "damson",
+   "count": 2
+  },
+  {
+   "id": "t-rhubarb",
+   "name": "Rhubarb patch",
+   "type": "rhubarb",
+   "count": 1
+  }
+ ],
+ "done": {
+  "t-cherry:prune": [
+   "2026-08-29"
+  ],
+  "t-damson:prune": [
+   "2026-08-29"
+  ],
+  "t-cook:harvest": [
+   "2026-09-27"
+  ],
+  "t-damson:harvest": [
+   "2026-09-27"
+  ],
+  "t-eat:harvest": [
+   "2026-09-27"
+  ]
+ }
+}
