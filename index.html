@@ -5,11 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Allotment Planner</title>
 <style>
-:root{--bg:#f5f3ec;--card:#fff;--ink:#1f2a1f;--muted:#6b7565;--line:#e2ddd0;--green:#3f7d3a;--green-soft:#e2efde;--amber:#a86b12;--amber-soft:#fbefd8;--red:#b4452f;--red-soft:#f8e2dc;--blue:#2f6690;--blue-soft:#dde9f3;--brown:#8a5a2b;--brown-soft:#f0e5d8}
-@media (prefers-color-scheme:dark){:root{--bg:#131712;--card:#1c221b;--ink:#e6eadf;--muted:#9aa393;--line:#2e362c;--green:#82c477;--green-soft:#223222;--amber:#e3ac4c;--amber-soft:#332916;--red:#e3806a;--red-soft:#3a211c;--blue:#7fb2e2;--blue-soft:#1a2937;--brown:#cc9e70;--brown-soft:#2e2419}}
+:root{--bg:#f5f3ec;--card:#fff;--ink:#1f2a1f;--muted:#6b7565;--line:#e2ddd0;--green:#3f7d3a;--green-soft:#e2efde;--amber:#a86b12;--amber-soft:#fbefd8;--red:#b4452f;--red-soft:#f8e2dc;--blue:#2f6690;--blue-soft:#dde9f3;--brown:#8a5a2b;--brown-soft:#f0e5d8;--purple:#7b3fa0;--purple-soft:#eee2f6;--orange:#d9700e;--orange-soft:#fde8d3;--h1:#3a7a36;--h2:#5c9a4a}
+@media (prefers-color-scheme:dark){:root{--bg:#131712;--card:#1c221b;--ink:#e6eadf;--muted:#9aa393;--line:#2e362c;--green:#82c477;--green-soft:#223222;--amber:#e3ac4c;--amber-soft:#332916;--red:#e3806a;--red-soft:#3a211c;--blue:#7fb2e2;--blue-soft:#1a2937;--brown:#cc9e70;--brown-soft:#2e2419;--purple:#c39ae6;--purple-soft:#2c2136;--orange:#f3a04a;--orange-soft:#3a2711}}
+/* seasonal banner – follows the month being viewed */
+body[data-season=winter]{--h1:#2e4a66;--h2:#4c6f8f}
+body[data-season=spring]{--h1:#3a7a36;--h2:#5c9a4a}
+body[data-season=summer]{--h1:#2c6e3f;--h2:#9a7a1e}
+body[data-season=autumn]{--h1:#7a3612;--h2:#b0561a}
+@media (prefers-color-scheme:dark){body[data-season=winter]{--h1:#182a3d;--h2:#2b4661}body[data-season=spring]{--h1:#1f4a22;--h2:#356b33}body[data-season=summer]{--h1:#18422a;--h2:#5e4a12}body[data-season=autumn]{--h1:#4a1f0c;--h2:#7a3a12}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{background:var(--green);color:#fff;padding:14px 16px 0}
+header{background:linear-gradient(120deg,var(--h1),var(--h2));color:#fff;padding:14px 16px 0;position:relative;overflow:hidden;text-shadow:0 1px 2px rgba(0,0,0,.25);transition:background .5s}
+header .wrap{position:relative}
+header .season{position:absolute;right:-4px;top:-14px;font-size:110px;line-height:1;opacity:.18;pointer-events:none;text-shadow:none;user-select:none}
+header .sname{font-size:12px;background:rgba(255,255,255,.18);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle}
 .wrap{max-width:960px;margin:0 auto}
 h1{margin:0;font-size:20px}
 .sub{opacity:.85;font-size:13px}
@@ -24,7 +33,9 @@ main{padding:16px}
 .card h2{margin:0 0 10px;font-size:16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .tip{background:var(--green-soft);border-color:transparent}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;cursor:pointer;user-select:none}
+.stat.on{border-color:var(--green);box-shadow:0 0 0 2px var(--green-soft)}
+.stat.on span{color:var(--green);font-weight:600}
 .stat b{display:block;font-size:22px}
 .stat span{font-size:12px;color:var(--muted)}
 .note{color:var(--muted);font-size:13px}
@@ -62,10 +73,26 @@ table.cal{border-collapse:collapse;width:100%;min-width:640px;font-size:13px}
 .cal th:first-child,.cal td:first-child{text-align:left;padding-left:0;white-space:nowrap}
 .cal .cur{background:var(--green-soft)}
 .bars{display:flex;flex-direction:column;gap:2px;min-height:14px;justify-content:center}
-.bars i{display:block;height:4px;border-radius:2px}
-.i-in{background:var(--blue)}.i-out{background:var(--green)}.i-pl{background:var(--brown)}.i-h{background:var(--amber)}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin-bottom:10px}
-.legend i{display:inline-block;width:14px;height:5px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.bars i{display:block;height:5px;border-radius:3px}
+.i-in{background:var(--blue)}.i-out{background:var(--green)}.i-pl{background:var(--purple)}.i-h{background:var(--orange)}
+.legend{display:flex;gap:6px;flex-wrap:wrap;font-size:13px;margin-bottom:8px}
+.legend button{background:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.legend button.off{opacity:.45;text-decoration:line-through}
+.legend i{display:inline-block;width:14px;height:6px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.segs{display:inline-flex;border:1px solid var(--green);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.segs button{background:none;border:0;color:var(--green);padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.segs button.on{background:var(--green);color:#fff}
+.cal tr.grp td{background:var(--bg);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;padding:7px 0 4px}
+table.cal.mv{min-width:0}
+.cal.mv th{font-size:11px;font-weight:600;color:var(--muted)}
+.cal.mv td{vertical-align:middle}
+.cal.mv td:first-child{white-space:normal}
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%}
+.sun{font-size:11px;color:var(--muted);white-space:nowrap;margin-left:4px}
+.cp{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0}
+.cp span{font-size:12px;border-radius:6px;padding:1px 7px;background:var(--green-soft);color:var(--green)}
+.cp.bad span{background:var(--red-soft);color:var(--red)}
+.lb{font-size:12px;background:none;border:0;color:var(--green);text-decoration:underline;cursor:pointer;padding:0;font-family:inherit}
 input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%}
 label.f{display:block;font-size:13px;color:var(--muted);margin-bottom:10px}
 label.f input,label.f select{margin-top:3px}
@@ -87,7 +114,8 @@ details summary{cursor:pointer;color:var(--muted);font-size:14px}
 </head>
 <body>
 <header><div class="wrap">
-  <h1>🌱 Allotment Planner</h1>
+  <span class="season" id="seasonIcon" aria-hidden="true"></span>
+  <h1>🌱 Allotment Planner <span class="sname" id="seasonName"></span></h1>
   <div class="sub">Manchester · light/loam soil · last frost ~mid-May, first frost ~late Oct</div>
   <div class="monthnav">
     <button data-act="prev" aria-label="Previous month">◀</button>
@@ -100,6 +128,7 @@ details summary{cursor:pointer;color:var(--muted);font-size:14px}
     <button data-act="tab" data-tab="plot">My plot</button>
     <button data-act="tab" data-tab="trees">Trees & perennials</button>
     <button data-act="tab" data-tab="cal">Year calendar</button>
+    <button data-act="tab" data-tab="comp">Companions</button>
     <button data-act="tab" data-tab="more">Backup & reminders</button>
   </nav>
 </div></header>
@@ -130,7 +159,8 @@ const MONTH_FULL=['January','February','March','April','May','June','July','Augu
 const R=(a,b)=>{const o=[];let m=a;for(;;){o.push(m);if(m===b)break;m=m%12+1;}return o;};
 
 /* in = sow under cover, out = sow/plant direct outdoors, pl = plant out, h = harvest months,
-   d = days sowing→harvest, pd = days planting→harvest, po = days from cover sowing to planting out */
+   d = days sowing→harvest, pd = days planting→harvest, po = days from cover sowing to planting out,
+   s = 'part' where the crop is happy in part shade (everything else wants full sun), ben = benefit (flowers) */
 const CROPS=[
 {id:'broad-bean',n:'Broad beans',f:'Legumes',out:[2,3,4,10,11],h:R(5,8),d:100,note:'Oct–Nov sowings of Aquadulce Claudia overwinter for an early crop.'},
 {id:'peas',n:'Peas',f:'Legumes',out:R(3,6),h:R(6,9),d:80},
@@ -141,26 +171,26 @@ const CROPS=[
 {id:'onion-sets',n:'Onion sets',f:'Alliums',out:[3,4],h:[7,8,9],d:130},
 {id:'onion-autumn',n:'Onion sets (autumn)',f:'Alliums',out:[9,10],h:[6,7],d:240,note:'Overwintering types, e.g. Radar, Electric.'},
 {id:'shallots',n:'Shallots',f:'Alliums',out:[2,3,11],h:[7,8],d:150},
-{id:'leek',n:'Leeks',f:'Alliums',in:[2,3],out:[3,4],pl:[6,7],h:R(9,4),d:170,pd:120,po:75},
+{id:'leek',s:'part',n:'Leeks',f:'Alliums',in:[2,3],out:[3,4],pl:[6,7],h:R(9,4),d:170,pd:120,po:75},
 {id:'spring-onion',n:'Spring onions',f:'Alliums',out:R(3,9),h:R(3,11),d:70,note:'Aug–Sep sowings of White Lisbon Winter Hardy stand over winter.'},
 {id:'carrot',n:'Carrots',f:'Roots',out:R(4,7),h:R(7,12),d:80,note:'Fine mesh against carrot fly. No fresh manure.'},
 {id:'parsnip',n:'Parsnips',f:'Roots',out:[3,4,5],h:R(10,3),d:150,note:'Slow to germinate; sweeter after a frost.'},
-{id:'beetroot',n:'Beetroot',f:'Roots',in:[3],out:R(4,7),pl:[4,5],h:R(6,10),d:70,pd:55},
+{id:'beetroot',s:'part',n:'Beetroot',f:'Roots',in:[3],out:R(4,7),pl:[4,5],h:R(6,10),d:70,pd:55},
 {id:'turnip',n:'Turnips',f:'Brassicas',out:R(3,8),h:R(5,12),d:50,note:'Pull at golf-ball size for the sweetest roots.'},
 {id:'swede',n:'Swede',f:'Brassicas',out:[5,6],h:R(9,2),d:140},
-{id:'radish',n:'Radish',f:'Brassicas',out:R(3,9),h:R(4,11),d:28,note:'Sow little and often every 2–3 weeks.'},
+{id:'radish',s:'part',n:'Radish',f:'Brassicas',out:R(3,9),h:R(4,11),d:28,note:'Sow little and often every 2–3 weeks.'},
 {id:'potato-early',n:'Potatoes (first early)',f:'Potatoes',out:[3,4],h:[6,7],d:100,note:'Chit from late Jan. Earth up as shoots appear.'},
 {id:'potato-main',n:'Potatoes (maincrop)',f:'Potatoes',out:[4,5],h:[8,9,10],d:135},
-{id:'lettuce',n:'Lettuce',f:'Salads',in:[2,3],out:R(3,8),pl:[4,5],h:R(5,11),d:55,pd:40,note:'Late sowings: cloche or fleece from mid-Oct.'},
-{id:'lettuce-winter',n:'Lettuce (winter hardy)',f:'Salads',out:[8,9,10],h:[3,4,5],d:180,note:'e.g. Arctic King, Winter Density – crops in spring.'},
-{id:'rocket',n:'Rocket & salad leaves',f:'Salads',out:R(3,9),h:R(4,11),d:30},
-{id:'corn-salad',n:"Lamb's lettuce",f:'Salads',out:[7,8,9],h:R(10,3),d:60,note:'Very hardy winter salad.'},
-{id:'mizuna',n:'Mizuna / oriental mustards',f:'Brassicas',out:[8,9],h:R(9,3),d:35,note:'Fast, hardy winter leaves.'},
-{id:'pak-choi',n:'Pak choi',f:'Brassicas',out:[6,7,8,9],h:R(7,11),d:45,note:'Early summer sowings bolt – Aug/Sep is ideal.'},
-{id:'spinach',n:'Spinach',f:'Leaves',out:[3,4,5],h:[5,6,7],d:45},
-{id:'winter-spinach',n:'Spinach (winter)',f:'Leaves',out:[8,9],h:R(10,4),d:45,pd:35,note:'Pick outer leaves; cloche in hard frost.'},
-{id:'chard',n:'Chard / perpetual spinach',f:'Leaves',out:R(4,8),h:[7,8,9,10,11,3,4,5],d:60},
-{id:'kale',n:'Kale',f:'Brassicas',in:[4,5],out:[4,5,6],pl:[6,7],h:R(9,3),d:110,pd:70},
+{id:'lettuce',s:'part',n:'Lettuce',f:'Salads',in:[2,3],out:R(3,8),pl:[4,5],h:R(5,11),d:55,pd:40,note:'Late sowings: cloche or fleece from mid-Oct.'},
+{id:'lettuce-winter',s:'part',n:'Lettuce (winter hardy)',f:'Salads',out:[8,9,10],h:[3,4,5],d:180,note:'e.g. Arctic King, Winter Density – crops in spring.'},
+{id:'rocket',s:'part',n:'Rocket & salad leaves',f:'Salads',out:R(3,9),h:R(4,11),d:30},
+{id:'corn-salad',s:'part',n:"Lamb's lettuce",f:'Salads',out:[7,8,9],h:R(10,3),d:60,note:'Very hardy winter salad.'},
+{id:'mizuna',s:'part',n:'Mizuna / oriental mustards',f:'Brassicas',out:[8,9],h:R(9,3),d:35,note:'Fast, hardy winter leaves.'},
+{id:'pak-choi',s:'part',n:'Pak choi',f:'Brassicas',out:[6,7,8,9],h:R(7,11),d:45,note:'Early summer sowings bolt – Aug/Sep is ideal.'},
+{id:'spinach',s:'part',n:'Spinach',f:'Leaves',out:[3,4,5],h:[5,6,7],d:45},
+{id:'winter-spinach',s:'part',n:'Spinach (winter)',f:'Leaves',out:[8,9],h:R(10,4),d:45,pd:35,note:'Pick outer leaves; cloche in hard frost.'},
+{id:'chard',s:'part',n:'Chard / perpetual spinach',f:'Leaves',out:R(4,8),h:[7,8,9,10,11,3,4,5],d:60},
+{id:'kale',s:'part',n:'Kale',f:'Brassicas',in:[4,5],out:[4,5,6],pl:[6,7],h:R(9,3),d:110,pd:70},
 {id:'winter-cabbage',n:'Cabbage (winter)',f:'Brassicas',in:[4,5],pl:[6,7,8],h:R(11,3),d:150,pd:100,note:'Firm in well; net against pigeons.'},
 {id:'spring-cabbage',n:'Cabbage (spring)',f:'Brassicas',out:[7,8],pl:[9,10],h:[3,4,5],d:220,pd:170},
 {id:'summer-cabbage',n:'Cabbage (summer)',f:'Brassicas',in:[2,3,4],pl:[5,6],h:[7,8,9],d:120,pd:80},
@@ -174,11 +204,51 @@ const CROPS=[
 {id:'tomato',n:'Tomatoes (greenhouse)',f:'Solanaceae',in:[2,3,4],pl:[5],h:R(7,10),d:120,pd:70,po:60,note:'Feed weekly once the first truss sets.'},
 {id:'chilli',n:'Chillies & peppers',f:'Solanaceae',in:[1,2,3],pl:[5],h:R(8,10),d:150,pd:90,po:75},
 {id:'sweetcorn',n:'Sweetcorn',f:'Other',in:[4,5],pl:[6],h:[8,9],d:100,pd:80,po:30,note:'Plant in blocks, not rows, for pollination.'},
-{id:'parsley',n:'Parsley',f:'Herbs',in:[3],out:R(4,7),h:R(6,12),d:75},
-{id:'coriander',n:'Coriander',f:'Herbs',out:R(4,9),h:R(5,11),d:45},
+{id:'parsley',s:'part',n:'Parsley',f:'Herbs',in:[3],out:R(4,7),h:R(6,12),d:75,note:'Slow to germinate (3–4 weeks). Stands through mild winters.'},
+{id:'coriander',s:'part',n:'Coriander',f:'Herbs',out:R(4,9),h:R(5,11),d:45,note:'Bolts in heat – sow little and often; Aug/Sep sowings last longest.'},
+{id:'basil',n:'Basil',f:'Herbs',in:[3,4,5],pl:[6],h:R(6,9),d:60,pd:40,po:40,note:'Greenhouse or sunny windowsill – it sulks outdoors in Manchester.'},
+{id:'chives',s:'part',n:'Chives',f:'Herbs',in:[3,4],out:[4,5],pl:[5,6,9],h:R(4,10),d:90,pd:50,po:45,note:'Perennial. Divide clumps every 3 years. Flowers pull in bees.'},
+{id:'dill',n:'Dill',f:'Herbs',out:R(4,7),h:R(6,10),d:60,note:'Sow direct – hates root disturbance. Let some flower for hoverflies.'},
+{id:'mint',s:'part',n:'Mint',f:'Herbs',pl:[3,4,5,9],h:R(4,10),d:60,pd:60,note:'Perennial. Keep it in a pot (or a pot sunk in the bed) – it spreads.'},
+{id:'oregano',n:'Oregano / marjoram',f:'Herbs',in:[3,4],pl:[5,6],h:R(6,10),d:90,pd:60,po:50,note:'Perennial. Sunny, well-drained spot. Bees love the flowers.'},
+{id:'rosemary',n:'Rosemary',f:'Herbs',pl:[4,5,9],h:R(1,12),d:365,pd:365,note:'Evergreen shrub. Sunniest, best-drained spot – hates winter wet.'},
+{id:'sage',n:'Sage',f:'Herbs',pl:[4,5,9],h:R(4,11),d:120,pd:120,note:'Perennial. Trim after flowering; replace every 4–5 years.'},
+{id:'thyme',n:'Thyme',f:'Herbs',pl:[4,5,9],h:R(1,12),d:120,pd:120,note:'Perennial. Gritty, free-draining soil; grows well at bed edges.'},
+{id:'calendula',n:'Calendula (pot marigold)',f:'Flowers',in:[3],out:[3,4,5,9],h:R(6,10),d:60,ben:'Hoverflies & ladybirds (aphid control); sacrificial for aphids near beans. Hardy annual, self-seeds; a Sep sowing flowers early.'},
+{id:'french-marigold',n:'French marigold (Tagetes)',f:'Flowers',in:[3,4],pl:[5,6],h:R(6,10),d:70,pd:40,po:45,ben:'Deters whitefly – plant among greenhouse tomatoes. Half-hardy, so plant out after the frosts.'},
+{id:'nasturtium',n:'Nasturtium',f:'Flowers',in:[4],out:[5,6],pl:[5,6],h:R(6,10),d:60,pd:40,po:30,ben:'Trap crop for cabbage white caterpillars & blackfly; edible leaves & flowers. Grows on poor soil.'},
+{id:'borage',n:'Borage',f:'Flowers',out:[4,5,6],h:R(6,9),d:60,ben:'Bee magnet – boosts strawberry, bean & squash pollination. Self-seeds freely; deep roots mine nutrients.'},
+{id:'phacelia',n:'Phacelia',f:'Flowers',out:R(3,8),h:R(5,10),d:50,ben:'One of the best hoverfly & bee plants; doubles as a green manure on bare ground. Sow direct.'},
+{id:'limnanthes',n:'Poached egg plant',f:'Flowers',out:[3,4,9],h:[5,6,7],d:70,ben:'Low-growing hoverfly plant for bed edges & under fruit trees. Hardy; autumn sowings flower in May.'},
+{id:'sweet-pea',n:'Sweet peas',f:'Flowers',in:[10,11,2,3],out:[4],pl:[4,5],h:R(6,9),d:120,pd:60,po:60,ben:'Pollinators for beans on the same frame. Autumn sowings in a cold frame give the strongest plants.'},
+{id:'cornflower',n:'Cornflower',f:'Flowers',out:[3,4,5,9],h:R(6,9),d:75,ben:'Bees, hoverflies & lacewings. Hardy annual – happy in cool summers.'},
+{id:'sunflower',n:'Sunflowers',f:'Flowers',in:[4],out:[5],pl:[5,6],h:[8,9],d:100,pd:80,po:30,ben:'Bees, then seed for birds. Windbreak / frame for climbing beans. Keep away from potatoes.'},
+{id:'alyssum',s:'part',n:'Sweet alyssum',f:'Flowers',in:[3,4],out:[4,5],pl:[5],h:R(6,10),d:60,pd:40,po:40,ben:'Ground-cover hoverfly plant between lettuces & brassicas; long flowering.'},
+{id:'cosmos',n:'Cosmos',f:'Flowers',in:[3,4],pl:[5,6],h:R(7,10),d:80,pd:50,po:45,ben:'Late-summer pollinators & hoverflies; cut flowers. Half-hardy – plant out after frosts.'},
 {id:'strawberry',n:'Strawberry plants',f:'Fruit',pl:[8,9,10,3],h:[6,7],d:280,pd:280,note:'Plant by early autumn for a crop next summer.'},
-{id:'rhubarb-crown',n:'Rhubarb crowns',f:'Fruit',pl:[11,12,1,2,3],h:R(4,7),d:365,pd:365,note:'Don’t pull stems in the first year.'},
+{id:'rhubarb-crown',s:'part',n:'Rhubarb crowns',f:'Fruit',pl:[11,12,1,2,3],h:R(4,7),d:365,pd:365,note:'Don’t pull stems in the first year.'},
 {id:'green-manure',n:'Green manure',f:'Soil',out:[8,9,10],h:[3,4],d:150,note:'Winter rye / field beans / vetch. “Harvest” = dig in 3–4 weeks before sowing.'}
+];
+
+const GROUP_ORDER=['Legumes','Alliums','Roots','Potatoes','Brassicas','Leaves','Salads','Cucurbits','Solanaceae','Other','Herbs','Flowers','Fruit','Soil'];
+const groupIx=f=>{const i=GROUP_ORDER.indexOf(f);return i<0?99:i;};
+const sortedCrops=()=>CROPS.slice().sort((a,b)=>groupIx(a.f)-groupIx(b.f)||a.n.localeCompare(b.n));
+function groupedCrops(){const o=[];sortedCrops().forEach(c=>{const g=o[o.length-1];if(g&&g.g===c.f)g.cs.push(c);else o.push({g:c.f,cs:[c]});});return o;}
+const sunTag=c=>c.s==='part'?'<span class="sun" title="Happy in sun or part shade">⛅ part shade OK</span>':'';
+
+const COMPANIONS=[
+{n:'Peas & beans (legumes)',good:['Carrots','Sweetcorn (a frame for climbers)','Squash & courgettes','Brassicas','Lettuce & radish','Potatoes (broad beans)'],bad:['Onions, garlic, leeks, shallots & chives'],why:'Legumes fix nitrogen, which leafy brassicas following them use. Alliums are said to stunt beans – keep them in separate beds.'},
+{n:'Onions, garlic, leeks & shallots (alliums)',good:['Carrots & parsnips','Beetroot & chard','Lettuce','Brassicas','Strawberries','Chamomile'],bad:['Peas & beans'],why:'Allium scent masks carrots from carrot fly, and carrots return the favour against onion fly – alternate rows of each.'},
+{n:'Carrots & parsnips',good:['Onions, leeks & spring onions','Lettuce','Peas','Rosemary, sage & chives','Tomatoes'],bad:['Dill once it flowers','Parsnips right next to carrots (same pests)'],why:'Rows of alliums or a mesh barrier are the best carrot-fly defence; the strong-smelling herbs help.'},
+{n:'Brassicas (cabbage, kale, broccoli, sprouts, cauliflower, turnips, swede)',good:['Onions & garlic','Beetroot & chard','Nasturtiums (trap crop)','Dill, chamomile & sweet alyssum','Mint in a pot','Potatoes'],bad:['Strawberries','Tomatoes','Runner beans (cast shade)'],why:'Nasturtiums draw cabbage whites away, dill & alyssum bring in hoverflies and parasitic wasps that eat caterpillars & aphids. Net against pigeons regardless.'},
+{n:'Potatoes',good:['Broad beans & peas','Sweetcorn','Cabbage','Horseradish at bed corners','French marigolds'],bad:['Tomatoes (blight spreads between them)','Squash, courgettes & cucumbers','Carrots','Sunflowers'],why:'Keep potatoes and tomatoes as far apart as the plot allows – both catch blight in our wet summers.'},
+{n:'Tomatoes, chillies & peppers',good:['Basil','French marigolds (whitefly)','Chives & garlic','Carrots','Lettuce','Parsley'],bad:['Potatoes','Brassicas','Sweetcorn','Fennel'],why:'Basil and Tagetes in the greenhouse border cut whitefly & aphids; basil is said to improve tomato flavour and is easy to fit at their feet.'},
+{n:'Courgettes, squash & cucumbers',good:['Sweetcorn & beans (“three sisters”)','Nasturtiums','Borage','Radish','Peas'],bad:['Potatoes'],why:'Big leaves shade out weeds under sweetcorn; borage & nasturtiums bring the bees that cucurbits need for fruit set.'},
+{n:'Lettuce & salad leaves',good:['Carrots & radish','Spring onions','Beetroot','Strawberries','Chervil & coriander','Taller crops for summer shade'],bad:['Brassicas (compete for space & slugs)','Parsley'],why:'Fast salads slot between slow crops. In midsummer, shade from beans or sweetcorn stops them bolting.'},
+{n:'Beetroot, chard & spinach',good:['Onions & garlic','Brassicas','Lettuce','Dwarf French beans','Mint in a pot'],bad:['Runner beans','Mustard family green manures'],why:'Leaf beets are easy-going; they mainly want to avoid the shade of climbing beans.'},
+{n:'Sweetcorn',good:['Climbing beans','Squash & courgettes','Cucumbers','Peas','Potatoes'],bad:['Tomatoes (share corn earworm)'],why:'Plant in blocks for pollination, then let beans climb and squash sprawl underneath.'},
+{n:'Strawberries',good:['Borage','Lettuce & spinach','Onions & garlic','Thyme','Sweet alyssum'],bad:['Brassicas','Potatoes & tomatoes (verticillium wilt)'],why:'Borage is the classic strawberry partner – more bees, better-set fruit.'},
+{n:'Herbs',good:['Basil → tomatoes','Chives → carrots, apples & roses','Dill → brassicas, cucumbers','Mint (potted) → brassicas','Rosemary, sage & thyme → carrots, brassicas, beans','Parsley → tomatoes, sweetcorn'],bad:['Dill next to carrots or fennel','Mint loose in a bed (invasive)','Fennel near almost everything'],why:'Strong-scented Mediterranean herbs confuse pests and their flowers feed hoverflies. Fennel inhibits neighbours – give it its own corner.'}
 ];
 
 const TIPS={1:'Coldest month. Plan beds & order seed. Chit first-early potatoes late in the month.',2:'Start chillies & tomatoes indoors with heat. Cover beds with polythene to warm the soil.',3:'Soil warming up. Outdoor sowing starts late in the month if the soil isn’t cold and wet.',4:'Frosts still likely in Manchester. Main sowing month – keep fleece handy.',5:'Last frost usually mid–late May. Harden off tender plants and plant out at the end of the month.',6:'Plant out tender crops. Water in dry spells and keep on top of weeds.',7:'Peak growth. Keep successional sowing salads; feed greenhouse crops weekly.',8:'Sow winter & spring crops now. Summer prune apples. Harvest daily.',9:'Last outdoor sowings of fast salads. Sow green manure on bare ground.',10:'First frosts possible late in the month. Plant garlic & autumn onions; manure cleared beds.',11:'Dormant season begins. Winter prune apples, manure empty beds, net brassicas.',12:'Quiet month. Finish winter pruning apples (never cherries/damsons). Clean tools & greenhouse.'};
@@ -263,7 +333,9 @@ function load(){try{const s=localStorage.getItem(LS);if(s){const o=JSON.parse(s)
 function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
 let S=load()||defaults();save();
 const _t=new Date();
-let view={y:_t.getFullYear(),m:_t.getMonth()+1,tab:'month'};
+let view={y:_t.getFullYear(),m:_t.getMonth()+1,tab:'month',calMode:'month',types:{in:true,out:true,pl:true,h:true},q:'',focus:null};
+const season=m=>(m===12||m<=2)?'winter':m<=5?'spring':m<=8?'summer':'autumn';
+const SEASON={winter:['❄️','Winter'],spring:['🌷','Spring'],summer:['☀️','Summer'],autumn:['🍂','Autumn']};
 
 /* ---------- helpers ---------- */
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -317,7 +389,7 @@ function isDone(t){const last=lastDone(t.id);if(!last||last>monthEnd())return nu
 function plantOuts(){
  return S.log.filter(e=>e.status!=='done'&&e.method==='cover'&&!e.planted&&crop(e.crop)?.pl).map(e=>({e,due:addDays(parse(e.date),crop(e.crop).po||35)}));
 }
-function suggestions(m){const g={out:[],in:[],pl:[]};CROPS.forEach(c=>{if(has(c.out,m))g.out.push(c);if(has(c.in,m))g.in.push(c);if(has(c.pl,m))g.pl.push(c);});return g;}
+function suggestions(m){const g={out:[],in:[],pl:[]};sortedCrops().forEach(c=>{if(has(c.out,m))g.out.push(c);if(has(c.in,m))g.in.push(c);if(has(c.pl,m))g.pl.push(c);});return g;}
 
 /* ---------- views ---------- */
 function rMonth(){
@@ -331,24 +403,30 @@ function rMonth(){
  const g=suggestions(m);
  const loggedThisMonth=id=>S.log.find(e=>e.crop===id&&parse(e.date)>=monthStart()&&parse(e.date)<=monthEnd());
  const growing=id=>active.some(e=>e.crop===id);
- const sug=(list,method,btn)=>list.length?list.map(c=>{const l=loggedThisMonth(c.id);return `<div class="sug"><div><b>${esc(c.n)}</b> <span class="fam">${c.f}</span>${l?`<span class="badge">✓ logged ${fmt(parse(l.date))}</span>`:growing(c.id)?'<span class="badge">growing</span>':''}
-  <div class="note">${c.note?esc(c.note)+' · ':''}Harvest ${ml(c.h)}</div></div>
+ const sug=(list,method,btn)=>list.length?list.map(c=>{const l=loggedThisMonth(c.id);return `<div class="sug"><div><b>${esc(c.n)}</b> <span class="fam">${c.f}</span>${sunTag(c)}${l?`<span class="badge">✓ logged ${fmt(parse(l.date))}</span>`:growing(c.id)?'<span class="badge">growing</span>':''}
+  <div class="note">${c.note?esc(c.note)+' · ':''}${c.f==='Flowers'?'Flowers':'Harvest'} ${ml(c.h)}</div></div>
   <button class="btn ${l?'ghost':''} sm" data-act="log" data-crop="${c.id}" data-method="${method}">${l?'+ again':btn}</button></div>`}).join(''):'<div class="empty">Nothing this month.</div>';
+ const F=view.focus,show=k=>!F||F===k;
+ const tile=(k,n,l)=>`<div class="stat ${F===k?'on':''}" data-act="focus" data-f="${k}" title="Tap to show only this"><b>${n}</b><span>${l}</span></div>`;
+ const FL={crops:'crops in the ground',harvest:'harvest',jobs:'jobs'};
  return `
  <div class="card tip">🌦️ <b>${MONTH_FULL[m-1]}:</b> ${TIPS[m]}</div>
- <div class="stats"><div class="stat"><b>${active.length}</b><span>crops in</span></div><div class="stat"><b>${harvest.length}</b><span>${isCurrent()?'ready / soon':'to harvest'}</span></div><div class="stat"><b>${pending}</b><span>jobs to do</span></div></div>
- <div class="card"><h2>Jobs – trees, soil & manure</h2>
+ <div class="stats">${tile('crops',active.length,'crops in')}${tile('harvest',harvest.length,isCurrent()?'ready / soon':'to harvest')}${tile('jobs',pending,'jobs to do')}</div>
+ ${F?`<div class="note" style="margin:-6px 0 10px">Showing ${FL[F]} only · <button class="lb" data-act="focus" data-f="${F}">show everything</button></div>`:''}
+ ${F==='crops'?`<div class="card"><h2>In the ground (${active.length}) <button class="btn sm" data-act="log">+ Log sowing</button></h2>${active.map(entryHTML).join('')||'<div class="empty">Nothing logged yet.</div>'}</div>`:''}
+ ${show('jobs')?`<div class="card"><h2>Jobs – trees, soil & manure</h2>
   ${po.map(p=>`<div class="job"><div style="flex:1"><b>Plant out ${esc(crop(p.e.crop).n)}</b><span class="who po">due ${fmt(p.due)}</span><div class="note">Sown under cover ${fmt(parse(p.e.date))}. Harden off for a week first.</div></div><button class="btn sm" data-act="planted" data-id="${p.e.id}">Planted</button></div>`).join('')}
   ${tasks.map(t=>{const d=isDone(t);return `<label class="job ${d?'done':''}"><input type="checkbox" data-act="task" data-id="${t.id}" ${d?'checked':''}><div><b>${esc(t.t)}</b><span class="who ${t.cat==='soil'?'soil':''}">${t.cat==='soil'?'Plot':esc(t.who)}</span><div class="note">${esc(t.d)}${d?` · <b>Done ${fmt(d)}</b>`:''}</div></div></label>`}).join('')||'<div class="empty">No jobs.</div>'}
- </div>
- <div class="card"><h2>${isCurrent()?'Ready to harvest (next 3 weeks)':'Harvesting this month'}</h2>
+ </div>`:''}
+ ${show('harvest')?`<div class="card"><h2>${isCurrent()?'Ready to harvest (next 3 weeks)':'Harvesting this month'}</h2>
   ${harvest.map(x=>`<div class="sug"><div><b>${esc(crop(x.e.crop).n)}</b>${x.e.note?` <span class="fam">${esc(x.e.note)}</span>`:''}<div class="note">${x.s.sub}</div></div><span class="pill ${x.s.cls}">${x.s.t}</span></div>`).join('')||'<div class="empty">Nothing due yet – see My plot for estimates.</div>'}
- </div>
- <div class="card"><h2>What to sow & plant</h2>
+ </div>`:''}
+ ${!F?`<div class="card"><h2>What to sow & plant <button class="btn ghost sm" data-act="tab" data-tab="cal">Month view ›</button></h2>
+  <div class="note" style="margin-bottom:4px">Grouped by family, A–Z. All want full sun unless marked ⛅.</div>
   <h3>Sow / plant outdoors</h3>${sug(g.out,'sown','✓ Sown')}
   <h3>Sow under cover / greenhouse</h3>${sug(g.in,'cover','✓ Sown')}
   <h3>Plant out</h3>${sug(g.pl,'planted','✓ Planted')}
- </div>`;
+ </div>`:''}`;
 }
 function entryHTML(e){
  const c=crop(e.crop),s=status(e);
@@ -382,13 +460,49 @@ function rTrees(){
  <div class="card tip">✂️ <b>Pruning rule of thumb:</b> apples & pears in winter (dormant) plus a light summer trim; cherries, damsons & plums <b>only in summer</b> – winter cuts let in silver leaf.</div>`;
 }
 function isDoneNow(t){const last=lastDone(t.id);return last&&(today()-last)/864e5<t.m.length*31+10;}
+const TYPES=[['in','Sow under cover','Under cover','cover'],['out','Sow outdoors','Outdoors','sown'],['pl','Plant out','Plant out','planted'],['h','Harvest / in flower','Harvest','']];
 function rCal(){
- return `<div class="card"><h2>Year calendar</h2>
- <div class="legend"><span><i class="i-in"></i>Sow under cover</span><span><i class="i-out"></i>Sow outdoors</span><span><i class="i-pl"></i>Plant out</span><span><i class="i-h"></i>Harvest</span></div>
- <input id="calSearch" placeholder="Filter crops…" style="margin-bottom:10px">
- <div class="calwrap"><table class="cal"><thead><tr><th>Crop</th>${MONTHS.map((x,i)=>`<th class="${i+1===view.m?'cur':''}">${x[0]}</th>`).join('')}</tr></thead><tbody>
- ${CROPS.map(c=>`<tr data-name="${esc((c.n+' '+c.f).toLowerCase())}"><td>${esc(c.n)}</td>${MONTHS.map((x,i)=>{const m=i+1;return `<td class="${m===view.m?'cur':''}"><div class="bars">${has(c.in,m)?'<i class="i-in"></i>':''}${has(c.out,m)?'<i class="i-out"></i>':''}${has(c.pl,m)?'<i class="i-pl"></i>':''}${has(c.h,m)?'<i class="i-h"></i>':''}</div></td>`}).join('')}</tr>`).join('')}
- </tbody></table></div></div>`;
+ const T=view.types,on=k=>!!T[k];
+ const act=(c,m)=>({in:has(c.in,m),out:has(c.out,m),pl:has(c.pl,m),h:has(c.h,m)});
+ const anyOn=a=>TYPES.some(([k])=>on(k)&&a[k]);
+ const year=view.calMode==='year';
+ const head=`<div class="card"><h2>Year calendar</h2>
+ <div class="segs"><button data-act="calmode" data-mode="month" class="${year?'':'on'}">${MONTH_FULL[view.m-1]}</button><button data-act="calmode" data-mode="year" class="${year?'on':''}">12 months</button></div>
+ <div class="legend">${TYPES.map(([k,l])=>`<button data-act="ctype" data-type="${k}" class="${on(k)?'':'off'}" aria-pressed="${on(k)}"><i class="i-${k}"></i>${l}</button>`).join('')}</div>
+ <div class="note" style="margin-bottom:8px">Tap a legend item to show or hide it. Crops are grouped by family, A–Z. All want full sun unless marked ⛅ (fine in part shade).</div>
+ <input id="calSearch" placeholder="Filter crops…" value="${esc(view.q)}" style="margin-bottom:10px">`;
+ const grp=g=>`<tr class="grp" data-grp="1"><td colspan="${year?13:6}">${esc(g)}</td></tr>`;
+ const rowName=c=>esc((c.n+' '+c.f).toLowerCase());
+ let body;
+ if(year){
+  body=`<table class="cal"><thead><tr><th>Crop</th>${MONTHS.map((x,i)=>`<th class="${i+1===view.m?'cur':''}">${x[0]}</th>`).join('')}</tr></thead><tbody>
+  ${groupedCrops().map(({g,cs})=>{const rows=cs.filter(c=>MONTHS.some((x,i)=>anyOn(act(c,i+1)))).map(c=>`<tr data-name="${rowName(c)}"><td>${esc(c.n)}${sunTag(c)}</td>${MONTHS.map((x,i)=>{const m=i+1,a=act(c,m);return `<td class="${m===view.m?'cur':''}"><div class="bars">${TYPES.map(([k])=>on(k)&&a[k]?`<i class="i-${k}"></i>`:'').join('')}</div></td>`}).join('')}</tr>`);return rows.length?grp(g)+rows.join(''):'';}).join('')}
+  </tbody></table>`;
+ }else{
+  const m=view.m;
+  const rows=groupedCrops().map(({g,cs})=>{const rs=cs.filter(c=>anyOn(act(c,m))).map(c=>{const a=act(c,m);
+   const t=TYPES.find(([k,,,meth])=>meth&&on(k)&&a[k]);
+   return `<tr data-name="${rowName(c)}"><td><b>${esc(c.n)}</b>${sunTag(c)}<div class="note">${c.note?esc(c.note)+' · ':''}${c.f==='Flowers'?'Flowers':'Harvest'} ${ml(c.h)}</div></td>${TYPES.map(([k,l])=>`<td>${on(k)&&a[k]?`<span class="dot i-${k}" title="${l}"></span>`:''}</td>`).join('')}<td>${t?`<button class="btn ghost sm" data-act="log" data-crop="${c.id}" data-method="${t[3]}">Log</button>`:''}</td></tr>`});return rs.length?grp(g)+rs.join(''):'';}).join('');
+  body=`<table class="cal mv"><thead><tr><th>Crop</th>${TYPES.map(([k,,sh])=>`<th><i class="dot i-${k}" style="width:10px;height:10px"></i><br>${sh}</th>`).join('')}<th></th></tr></thead><tbody>${rows||'<tr><td colspan="6" class="empty">Nothing to do this month with the current filters.</td></tr>'}</tbody></table>`;
+ }
+ return head+`<div class="calwrap">${body}</div></div>`;
+}
+function applyCalFilter(){
+ const q=view.q.trim().toLowerCase(),rows=[...document.querySelectorAll('.cal tbody tr')];
+ rows.forEach(r=>{if(r.dataset.name!==undefined)r.style.display=r.dataset.name.includes(q)?'':'none';});
+ rows.forEach((r,i)=>{if(r.dataset.grp){let vis=false;for(let j=i+1;j<rows.length&&!rows[j].dataset.grp;j++)if(rows[j].style.display!=='none')vis=true;r.style.display=vis?'':'none';}});
+}
+function rComp(){
+ const flowers=CROPS.filter(c=>c.f==='Flowers').sort((a,b)=>a.n.localeCompare(b.n));
+ return `<div class="card tip">🌼 <b>Companion planting:</b> mixing crops, herbs and flowers confuses pests, brings in pollinators and hoverflies, and makes better use of space. None of this is a hard rule – the “keep apart” list is what most often goes wrong.</div>
+ <div class="card"><h2>Good neighbours & ones to keep apart</h2>
+ ${COMPANIONS.map(c=>`<div class="entry"><b>${esc(c.n)}</b><div class="cp">${c.good.map(x=>`<span>✓ ${esc(x)}</span>`).join('')}</div>${c.bad.length?`<div class="cp bad">${c.bad.map(x=>`<span>✗ ${esc(x)}</span>`).join('')}</div>`:''}<div class="note">${esc(c.why)}</div></div>`).join('')}
+ </div>
+ <div class="card"><h2>Beneficial flowers for a Manchester plot</h2>
+ <div class="note" style="margin-bottom:6px">All of these cope with cool, wet summers and most are hardy. They’re also in the Year calendar under “Flowers”, so you can log sowings like any crop. Full sun unless marked ⛅.</div>
+ ${flowers.map(c=>`<div class="sug"><div><b>${esc(c.n)}</b>${sunTag(c)}<div class="note">${esc(c.ben)}</div><div class="note">${c.in?'Sow under cover '+ml(c.in)+' · ':''}${c.out?'Sow outdoors '+ml(c.out)+' · ':''}${c.pl?'Plant out '+ml(c.pl)+' · ':''}Flowers ${ml(c.h)}</div></div><button class="btn sm" data-act="log" data-crop="${c.id}" data-method="${c.out?'sown':'cover'}">Log</button></div>`).join('')}
+ </div>
+ <div class="card tip">🐌 <b>Wet-climate tip:</b> slugs are the main enemy on a Manchester plot. Calendula, borage, cornflower, phacelia and nasturtium shrug them off best; protect young cosmos, sunflowers and sweet peas until they’re established.</div>`;
 }
 function rMore(){
  return `<div class="card"><h2>Phone reminders</h2><p class="note">Download a calendar file with a monthly “jobs & sowing” reminder (first Saturday of each month, 9am) for the next 12 months, plus harvest checks and plant-out dates for what you’ve logged. Open it on your phone to add to Google/Apple Calendar. Re-download after logging new sowings.</p><button class="btn" data-act="ics">Download reminders (.ics)</button></div>
@@ -398,20 +512,21 @@ function rMore(){
 function render(){
  document.getElementById('mlabel').textContent=MONTH_FULL[view.m-1]+' '+view.y;
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===view.tab));
- const f={month:rMonth,plot:rPlot,trees:rTrees,cal:rCal,more:rMore}[view.tab];
+ const sn=season(view.m);document.body.dataset.season=sn;document.getElementById('seasonIcon').textContent=SEASON[sn][0];document.getElementById('seasonName').textContent=SEASON[sn][1];
+ const f={month:rMonth,plot:rPlot,trees:rTrees,cal:rCal,comp:rComp,more:rMore}[view.tab];
  document.getElementById('main').innerHTML=f();
  const cs=document.getElementById('calSearch');
- if(cs)cs.addEventListener('input',()=>{const q=cs.value.toLowerCase();document.querySelectorAll('.cal tbody tr').forEach(r=>r.style.display=r.dataset.name.includes(q)?'':'none');});
+ if(cs){cs.addEventListener('input',()=>{view.q=cs.value;applyCalFilter();});applyCalFilter();}
 }
 
 /* ---------- modal ---------- */
 let editing=null;
 const $=id=>document.getElementById(id);
-$('mCrop').innerHTML=CROPS.map(c=>`<option value="${c.id}">${esc(c.n)}</option>`).join('');
+$('mCrop').innerHTML=groupedCrops().map(({g,cs})=>`<optgroup label="${esc(g)}">${cs.map(c=>`<option value="${c.id}">${esc(c.n)}</option>`).join('')}</optgroup>`).join('');
 function openModal(e,cropId,method){
  editing=e?e.id:null;
  $('mTitle').textContent=e?'Edit entry':'Log sowing / planting';
- $('mCrop').value=e?e.crop:(cropId||CROPS[0].id);
+ $('mCrop').value=e?e.crop:(cropId||sortedCrops()[0].id);
  $('mDate').value=e?e.date:iso(isCurrent()?today():new Date(view.y,view.m-1,15));
  $('mMethod').value=e?e.method:(method||'sown');
  $('mBed').value=e?e.bed||'':'';$('mNote').value=e?e.note||'':'';
@@ -460,6 +575,9 @@ document.addEventListener('click',ev=>{
   case 'next':view.m++;if(view.m>12){view.m=1;view.y++;}break;
   case 'now':view.y=new Date().getFullYear();view.m=new Date().getMonth()+1;break;
   case 'tab':view.tab=b.dataset.tab;break;
+  case 'focus':view.focus=view.focus===b.dataset.f?null:b.dataset.f;break;
+  case 'calmode':view.calMode=b.dataset.mode;break;
+  case 'ctype':view.types[b.dataset.type]=!view.types[b.dataset.type];break;
   case 'log':openModal(null,b.dataset.crop,b.dataset.method);return;
   case 'edit':openModal(entry);return;
   case 'mclose':closeModal();return;
