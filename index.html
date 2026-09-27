@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Allotment Planner</title>
+<style>
+:root{--bg:#f5f3ec;--card:#fff;--ink:#1f2a1f;--muted:#6b7565;--line:#e2ddd0;--green:#3f7d3a;--green-soft:#e2efde;--amber:#a86b12;--amber-soft:#fbefd8;--red:#b4452f;--red-soft:#f8e2dc;--blue:#2f6690;--blue-soft:#dde9f3;--brown:#8a5a2b;--brown-soft:#f0e5d8}
+@media (prefers-color-scheme:dark){:root{--bg:#131712;--card:#1c221b;--ink:#e6eadf;--muted:#9aa393;--line:#2e362c;--green:#82c477;--green-soft:#223222;--amber:#e3ac4c;--amber-soft:#332916;--red:#e3806a;--red-soft:#3a211c;--blue:#7fb2e2;--blue-soft:#1a2937;--brown:#cc9e70;--brown-soft:#2e2419}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--green);color:#fff;padding:14px 16px 0}
+.wrap{max-width:960px;margin:0 auto}
+h1{margin:0;font-size:20px}
+.sub{opacity:.85;font-size:13px}
+.monthnav{display:flex;align-items:center;gap:8px;margin:12px 0}
+.monthnav b{font-size:18px;flex:1;text-align:center}
+.monthnav button{background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:8px;padding:6px 12px;font-size:15px;cursor:pointer}
+nav{display:flex;gap:2px;overflow-x:auto}
+nav button{background:none;border:0;color:#fff;opacity:.75;padding:10px 12px;font-size:14px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+nav button.on{opacity:1;border-color:#fff;font-weight:600}
+main{padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:16px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tip{background:var(--green-soft);border-color:transparent}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:22px}
+.stat span{font-size:12px;color:var(--muted)}
+.note{color:var(--muted);font-size:13px}
+.job{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.job:first-of-type{border-top:0}
+.job input{width:20px;height:20px;margin-top:2px;accent-color:var(--green);flex:none}
+.job.done b{text-decoration:line-through;color:var(--muted)}
+.who{font-size:12px;background:var(--brown-soft);color:var(--brown);border-radius:6px;padding:1px 6px;margin-left:4px}
+.who.soil{background:var(--blue-soft);color:var(--blue)}
+.who.po{background:var(--amber-soft);color:var(--amber)}
+.sug{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.sug:first-of-type{border-top:0}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:14px 0 4px}
+h3:first-child{margin-top:0}
+.fam{font-size:11px;color:var(--muted)}
+.badge{font-size:11px;border-radius:6px;padding:1px 6px;margin-left:4px;background:var(--green-soft);color:var(--green)}
+button.btn,.btn{background:var(--green);color:#fff;border:0;border-radius:8px;padding:7px 12px;font-size:14px;cursor:pointer;white-space:nowrap}
+.btn.ghost{background:none;color:var(--green);border:1px solid var(--green)}
+.btn.sm{padding:4px 9px;font-size:13px}
+.btn.warn{background:none;color:var(--red);border:1px solid var(--red)}
+.pill{font-size:12px;border-radius:999px;padding:2px 9px;font-weight:600;white-space:nowrap}
+.pill.green{background:var(--green-soft);color:var(--green)}
+.pill.amber{background:var(--amber-soft);color:var(--amber)}
+.pill.red{background:var(--red-soft);color:var(--red)}
+.pill.muted{background:var(--line);color:var(--muted)}
+.entry{padding:11px 0;border-top:1px solid var(--line)}
+.entry:first-of-type{border-top:0}
+.entry .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.bar{height:6px;background:var(--line);border-radius:3px;margin:7px 0;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--green)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.calwrap{overflow-x:auto;margin:0 -14px;padding:0 14px}
+table.cal{border-collapse:collapse;width:100%;min-width:640px;font-size:13px}
+.cal th,.cal td{border-bottom:1px solid var(--line);padding:5px 3px;text-align:center}
+.cal th:first-child,.cal td:first-child{text-align:left;padding-left:0;white-space:nowrap}
+.cal .cur{background:var(--green-soft)}
+.bars{display:flex;flex-direction:column;gap:2px;min-height:14px;justify-content:center}
+.bars i{display:block;height:4px;border-radius:2px}
+.i-in{background:var(--blue)}.i-out{background:var(--green)}.i-pl{background:var(--brown)}.i-h{background:var(--amber)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;margin-bottom:10px}
+.legend i{display:inline-block;width:14px;height:5px;border-radius:2px;margin-right:5px;vertical-align:middle}
+input,select{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%}
+label.f{display:block;font-size:13px;color:var(--muted);margin-bottom:10px}
+label.f input,label.f select{margin-top:3px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row>*{flex:1}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:9;padding:16px}
+.modal.hidden{display:none}
+.sheet{background:var(--card);border-radius:14px;padding:16px;width:100%;max-width:440px}
+.sheet h3{text-transform:none;letter-spacing:0;font-size:17px;color:var(--ink);margin:0 0 12px}
+.tree{padding:11px 0;border-top:1px solid var(--line)}
+.tree:first-of-type{border-top:0}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0;font-size:13px}
+.kv div{background:var(--bg);border-radius:8px;padding:6px 8px}
+.kv span{display:block;color:var(--muted);font-size:11px}
+details summary{cursor:pointer;color:var(--muted);font-size:14px}
+.empty{color:var(--muted);font-size:14px;padding:4px 0}
+@media (min-width:640px){.modal{align-items:center}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>🌱 Allotment Planner</h1>
+  <div class="sub">Manchester · light/loam soil · last frost ~mid-May, first frost ~late Oct</div>
+  <div class="monthnav">
+    <button data-act="prev" aria-label="Previous month">◀</button>
+    <b id="mlabel"></b>
+    <button data-act="next" aria-label="Next month">▶</button>
+    <button data-act="now">Today</button>
+  </div>
+  <nav id="tabs">
+    <button data-act="tab" data-tab="month">This month</button>
+    <button data-act="tab" data-tab="plot">My plot</button>
+    <button data-act="tab" data-tab="trees">Trees & perennials</button>
+    <button data-act="tab" data-tab="cal">Year calendar</button>
+    <button data-act="tab" data-tab="more">Backup & reminders</button>
+  </nav>
+</div></header>
+<main class="wrap" id="main"></main>
+
+<div id="modal" class="modal hidden">
+  <div class="sheet">
+    <h3 id="mTitle">Log sowing</h3>
+    <label class="f">Crop<select id="mCrop"></select></label>
+    <div class="row">
+      <label class="f">Date<input type="date" id="mDate"></label>
+      <label class="f">How<select id="mMethod">
+        <option value="sown">Sown outdoors</option>
+        <option value="cover">Sown under cover / greenhouse</option>
+        <option value="planted">Planted out (plants / sets)</option>
+      </select></label>
+    </div>
+    <label class="f">Bed / where (optional)<input id="mBed" placeholder="e.g. Bed 3"></label>
+    <label class="f">Variety / notes (optional)<input id="mNote"></label>
+    <div class="row"><button class="btn ghost" data-act="mclose">Cancel</button><button class="btn" data-act="msave">Save</button></div>
+  </div>
+</div>
+<input type="file" id="importFile" accept=".json" hidden>
+
+<script>
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const R=(a,b)=>{const o=[];let m=a;for(;;){o.push(m);if(m===b)break;m=m%12+1;}return o;};
+
+/* in = sow under cover, out = sow/plant direct outdoors, pl = plant out, h = harvest months,
+   d = days sowing→harvest, pd = days planting→harvest, po = days from cover sowing to planting out */
+const CROPS=[
+{id:'broad-bean',n:'Broad beans',f:'Legumes',out:[2,3,4,10,11],h:R(5,8),d:100,note:'Oct–Nov sowings of Aquadulce Claudia overwinter for an early crop.'},
+{id:'peas',n:'Peas',f:'Legumes',out:R(3,6),h:R(6,9),d:80},
+{id:'peas-winter',n:'Peas (overwintering)',f:'Legumes',out:[10,11],h:[5,6],d:200,note:'Hardy round-seeded types, e.g. Meteor.'},
+{id:'runner-bean',n:'Runner beans',f:'Legumes',in:[4,5],out:[5,6],pl:[6],h:R(7,10),d:80,pd:60,po:30,note:'Tender – plant out after last frost.'},
+{id:'french-bean',n:'French beans',f:'Legumes',in:[4,5],out:[5,6,7],pl:[6],h:R(7,9),d:70,pd:55,po:30},
+{id:'garlic',n:'Garlic',f:'Alliums',out:[10,11,12,2],h:[6,7,8],d:240,note:'Needs a cold spell – Oct/Nov planting gives the biggest bulbs.'},
+{id:'onion-sets',n:'Onion sets',f:'Alliums',out:[3,4],h:[7,8,9],d:130},
+{id:'onion-autumn',n:'Onion sets (autumn)',f:'Alliums',out:[9,10],h:[6,7],d:240,note:'Overwintering types, e.g. Radar, Electric.'},
+{id:'shallots',n:'Shallots',f:'Alliums',out:[2,3,11],h:[7,8],d:150},
+{id:'leek',n:'Leeks',f:'Alliums',in:[2,3],out:[3,4],pl:[6,7],h:R(9,4),d:170,pd:120,po:75},
+{id:'spring-onion',n:'Spring onions',f:'Alliums',out:R(3,9),h:R(3,11),d:70,note:'Aug–Sep sowings of White Lisbon Winter Hardy stand over winter.'},
+{id:'carrot',n:'Carrots',f:'Roots',out:R(4,7),h:R(7,12),d:80,note:'Fine mesh against carrot fly. No fresh manure.'},
+{id:'parsnip',n:'Parsnips',f:'Roots',out:[3,4,5],h:R(10,3),d:150,note:'Slow to germinate; sweeter after a frost.'},
+{id:'beetroot',n:'Beetroot',f:'Roots',in:[3],out:R(4,7),pl:[4,5],h:R(6,10),d:70,pd:55},
+{id:'turnip',n:'Turnips',f:'Brassicas',out:R(3,8),h:R(5,12),d:50,note:'Pull at golf-ball size for the sweetest roots.'},
+{id:'swede',n:'Swede',f:'Brassicas',out:[5,6],h:R(9,2),d:140},
+{id:'radish',n:'Radish',f:'Brassicas',out:R(3,9),h:R(4,11),d:28,note:'Sow little and often every 2–3 weeks.'},
+{id:'potato-early',n:'Potatoes (first early)',f:'Potatoes',out:[3,4],h:[6,7],d:100,note:'Chit from late Jan. Earth up as shoots appear.'},
+{id:'potato-main',n:'Potatoes (maincrop)',f:'Potatoes',out:[4,5],h:[8,9,10],d:135},
+{id:'lettuce',n:'Lettuce',f:'Salads',in:[2,3],out:R(3,8),pl:[4,5],h:R(5,11),d:55,pd:40,note:'Late sowings: cloche or fleece from mid-Oct.'},
+{id:'lettuce-winter',n:'Lettuce (winter hardy)',f:'Salads',out:[8,9,10],h:[3,4,5],d:180,note:'e.g. Arctic King, Winter Density – crops in spring.'},
+{id:'rocket',n:'Rocket & salad leaves',f:'Salads',out:R(3,9),h:R(4,11),d:30},
+{id:'corn-salad',n:"Lamb's lettuce",f:'Salads',out:[7,8,9],h:R(10,3),d:60,note:'Very hardy winter salad.'},
+{id:'mizuna',n:'Mizuna / oriental mustards',f:'Brassicas',out:[8,9],h:R(9,3),d:35,note:'Fast, hardy winter leaves.'},
+{id:'pak-choi',n:'Pak choi',f:'Brassicas',out:[6,7,8,9],h:R(7,11),d:45,note:'Early summer sowings bolt – Aug/Sep is ideal.'},
+{id:'spinach',n:'Spinach',f:'Leaves',out:[3,4,5],h:[5,6,7],d:45},
+{id:'winter-spinach',n:'Spinach (winter)',f:'Leaves',out:[8,9],h:R(10,4),d:45,pd:35,note:'Pick outer leaves; cloche in hard frost.'},
+{id:'chard',n:'Chard / perpetual spinach',f:'Leaves',out:R(4,8),h:[7,8,9,10,11,3,4,5],d:60},
+{id:'kale',n:'Kale',f:'Brassicas',in:[4,5],out:[4,5,6],pl:[6,7],h:R(9,3),d:110,pd:70},
+{id:'winter-cabbage',n:'Cabbage (winter)',f:'Brassicas',in:[4,5],pl:[6,7,8],h:R(11,3),d:150,pd:100,note:'Firm in well; net against pigeons.'},
+{id:'spring-cabbage',n:'Cabbage (spring)',f:'Brassicas',out:[7,8],pl:[9,10],h:[3,4,5],d:220,pd:170},
+{id:'summer-cabbage',n:'Cabbage (summer)',f:'Brassicas',in:[2,3,4],pl:[5,6],h:[7,8,9],d:120,pd:80},
+{id:'psb',n:'Broccoli (purple sprouting)',f:'Brassicas',in:[4,5],pl:[6,7],h:[2,3,4],d:220,pd:180,note:'Stake in autumn so wind doesn’t rock plants loose.'},
+{id:'calabrese',n:'Calabrese broccoli',f:'Brassicas',in:[3,4],out:R(4,7),pl:[5,6],h:R(7,10),d:85,pd:60},
+{id:'sprouts',n:'Brussels sprouts',f:'Brassicas',in:[3,4],pl:[5,6],h:R(10,2),d:180,pd:140},
+{id:'cauli',n:'Cauliflower',f:'Brassicas',in:[3,4,5],pl:[5,6,7],h:R(8,11),d:120,pd:85},
+{id:'courgette',n:'Courgettes',f:'Cucurbits',in:[4,5],out:[6],pl:[6],h:R(7,10),d:70,pd:45,po:30,note:'Tender – plant out in June.'},
+{id:'squash',n:'Squash & pumpkins',f:'Cucurbits',in:[4,5],pl:[6],h:[9,10],d:130,pd:100,po:30,note:'Cure in the sun before first frost.'},
+{id:'cucumber',n:'Cucumbers (greenhouse)',f:'Cucurbits',in:[4,5],pl:[5,6],h:R(7,9),d:70,pd:50},
+{id:'tomato',n:'Tomatoes (greenhouse)',f:'Solanaceae',in:[2,3,4],pl:[5],h:R(7,10),d:120,pd:70,po:60,note:'Feed weekly once the first truss sets.'},
+{id:'chilli',n:'Chillies & peppers',f:'Solanaceae',in:[1,2,3],pl:[5],h:R(8,10),d:150,pd:90,po:75},
+{id:'sweetcorn',n:'Sweetcorn',f:'Other',in:[4,5],pl:[6],h:[8,9],d:100,pd:80,po:30,note:'Plant in blocks, not rows, for pollination.'},
+{id:'parsley',n:'Parsley',f:'Herbs',in:[3],out:R(4,7),h:R(6,12),d:75},
+{id:'coriander',n:'Coriander',f:'Herbs',out:R(4,9),h:R(5,11),d:45},
+{id:'strawberry',n:'Strawberry plants',f:'Fruit',pl:[8,9,10,3],h:[6,7],d:280,pd:280,note:'Plant by early autumn for a crop next summer.'},
+{id:'rhubarb-crown',n:'Rhubarb crowns',f:'Fruit',pl:[11,12,1,2,3],h:R(4,7),d:365,pd:365,note:'Don’t pull stems in the first year.'},
+{id:'green-manure',n:'Green manure',f:'Soil',out:[8,9,10],h:[3,4],d:150,note:'Winter rye / field beans / vetch. “Harvest” = dig in 3–4 weeks before sowing.'}
+];
+
+const TIPS={1:'Coldest month. Plan beds & order seed. Chit first-early potatoes late in the month.',2:'Start chillies & tomatoes indoors with heat. Cover beds with polythene to warm the soil.',3:'Soil warming up. Outdoor sowing starts late in the month if the soil isn’t cold and wet.',4:'Frosts still likely in Manchester. Main sowing month – keep fleece handy.',5:'Last frost usually mid–late May. Harden off tender plants and plant out at the end of the month.',6:'Plant out tender crops. Water in dry spells and keep on top of weeds.',7:'Peak growth. Keep successional sowing salads; feed greenhouse crops weekly.',8:'Sow winter & spring crops now. Summer prune apples. Harvest daily.',9:'Last outdoor sowings of fast salads. Sow green manure on bare ground.',10:'First frosts possible late in the month. Plant garlic & autumn onions; manure cleared beds.',11:'Dormant season begins. Winter prune apples, manure empty beds, net brassicas.',12:'Quiet month. Finish winter pruning apples (never cherries/damsons). Clean tools & greenhouse.'};
+
+const GENERAL=[
+{id:'g-clear',t:'Clear spent crops & compost them',m:[9,10],d:'Leave roots of peas & beans in the ground – they add nitrogen.'},
+{id:'g-greenmanure',t:'Sow green manure on bare beds',m:[8,9,10],d:'Winter rye, field beans or vetch protect and feed the soil over winter.'},
+{id:'g-manure',t:'Spread well-rotted manure on empty beds',m:[10,11,12,1,2],d:'5–8cm layer. Skip beds for carrots/parsnips next year (causes forking).'},
+{id:'g-fleece',t:'Fleece / cloche autumn salads',m:[10,11],d:'Lettuce, pak choi & spinach last much longer under cover.'},
+{id:'g-net',t:'Net brassicas against pigeons',m:[10,11,12,1,2,3],d:'Winter cabbage & broccoli are prime targets.'},
+{id:'g-leaves',t:'Collect leaves for leaf mould',m:[11],d:'Bag them damp with holes punched in – ready in 1–2 years.'},
+{id:'g-greenhouse',t:'Clean & insulate the greenhouse',m:[11],d:'Wash panes and staging to cut overwintering pests.'},
+{id:'g-seeds',t:'Plan rotation & order seeds',m:[12,1],d:'Rotate: legumes → brassicas → roots/potatoes → alliums.'},
+{id:'g-lime',t:'Test pH; lime the brassica bed if below 6.5',m:[12,1],d:'Don’t lime and manure the same bed at the same time.'},
+{id:'g-potatoes',t:'Buy & chit seed potatoes',m:[1,2],d:'Egg boxes on a cool, light windowsill.'},
+{id:'g-warm',t:'Cover beds to warm the soil',m:[2,3],d:'Polythene or cloches 2–3 weeks before sowing.'},
+{id:'g-dig-green',t:'Dig in / cut down green manure',m:[3,4],d:'Leave 3–4 weeks before sowing into that bed.'},
+{id:'g-feed-beds',t:'Rake in general fertiliser before sowing',m:[3,4],d:'e.g. fish, blood & bone, 1–2 weeks ahead.'},
+{id:'g-harden',t:'Harden off tender plants',m:[5],d:'A week outdoors by day, in at night, before planting out.'},
+{id:'g-water',t:'Water & feed in dry spells',m:[6,7,8],d:'Water deeply less often rather than little and often.'}
+];
+
+const appleTasks=h=>[
+{k:'winter-prune',t:'Winter prune',m:[11,12,1,2],d:'While dormant: remove dead, diseased & crossing branches, thin crowded spurs. Max ~20% of the tree.'},
+{k:'mulch',t:'Mulch with manure',m:[2,3],d:'Ring of well-rotted manure over the roots, kept ~10cm off the trunk.'},
+{k:'feed',t:'Feed',m:[3],d:'General fertiliser plus sulphate of potash for fruiting.'},
+{k:'thin',t:'Thin fruitlets',m:[6,7],d:'After the June drop, thin to 1–2 fruit per cluster.'},
+{k:'summer-prune',t:'Summer prune',m:[8],d:'Cut this year’s side shoots back to 3 leaves – mainly for trained/small trees.'},
+{k:'harvest',t:'Pick apples',m:h,d:'Ready when fruit lifts and twists off easily.'},
+{k:'grease',t:'Fit grease bands',m:[10],d:'Around trunks & stakes against winter moth.'},
+{k:'leaves',t:'Clear fallen leaves',m:[11],d:'Reduces scab carry-over.'}];
+const prunusTasks=(h,extra)=>[
+{k:'mulch',t:'Mulch with manure',m:[2,3],d:'Ring of well-rotted manure over the roots, kept off the trunk.'},
+{k:'feed',t:'Feed',m:[3],d:'General fertiliser plus sulphate of potash.'},
+{k:'frost',t:'Protect blossom',m:[4],d:'Fleece on frosty nights during flowering.'},
+...(extra||[]),
+{k:'prune',t:'Prune (summer only)',m:[6,7,8],d:'Dry weather, after fruiting. Never in winter – risk of silver leaf & canker.'},
+{k:'harvest',t:'Pick fruit',m:h,d:'Pick on dry days; use or freeze quickly.'},
+{k:'grease',t:'Fit grease bands',m:[10],d:'Against winter moth.'}];
+const TREE_TYPES={
+ apple:{label:'Eating apple',tasks:appleTasks([8,9,10])},
+ cooking:{label:'Cooking apple',tasks:appleTasks([9,10])},
+ pear:{label:'Pear',tasks:appleTasks([8,9,10])},
+ cherry:{label:'Cherry',tasks:prunusTasks([6,7],[{k:'net',t:'Net against birds',m:[5,6],d:'Cover before the fruit colours.'}])},
+ damson:{label:'Damson',tasks:prunusTasks([8,9])},
+ plum:{label:'Plum',tasks:prunusTasks([8,9],[{k:'thin',t:'Thin fruit',m:[6],d:'Thin heavy crops to stop branches snapping.'}])},
+ kiwi:{label:'Kiwi vine',tasks:[
+  {k:'winter-prune',t:'Winter prune',m:[12,1],d:'Cut fruited side shoots back to 2 buds past last fruit.'},
+  {k:'mulch',t:'Mulch with manure',m:[3],d:'Well-rotted manure around the base.'},
+  {k:'summer-prune',t:'Pinch out side shoots',m:[6,7,8],d:'Pinch fruiting shoots to 5–6 leaves beyond the last fruit.'},
+  {k:'harvest',t:'Pick kiwis',m:[10,11],d:'Pick before hard frost; ripen indoors next to an apple.'}]},
+ rhubarb:{label:'Rhubarb',tasks:[
+  {k:'mulch',t:'Mulch crowns with manure',m:[11,12,1,2],d:'Thick layer around (not on top of) the crowns.'},
+  {k:'force',t:'Force a crown (optional)',m:[1,2],d:'Cover with a bucket/forcer for early pink stems.'},
+  {k:'harvest',t:'Pull stems',m:R(4,7),d:'Pull, don’t cut. Stop by end of July to let it recover.'},
+  {k:'divide',t:'Divide old crowns',m:[11,12],d:'Every 5 years or so, split with a spade.'}]}
+};
+
+/* ---------- state ---------- */
+const LS='allotment-planner-v1';
+const uid=()=>Math.random().toString(36).slice(2,9);
+function defaults(){
+ const L=(crop,date,method,note)=>({id:uid(),crop,date,method,bed:'',note:note||'',status:'growing'});
+ return {
+  log:[
+   L('turnip','2026-09-05','sown'),L('radish','2026-09-05','sown'),
+   L('lettuce','2026-09-05','sown','Red Italian'),L('spring-onion','2026-09-05','sown'),L('pak-choi','2026-09-05','sown'),
+   L('winter-spinach','2026-09-12','sown'),L('winter-cabbage','2026-09-12','planted'),L('psb','2026-09-12','planted')
+  ],
+  trees:[
+   {id:'t-cook',name:'Cooking apple',type:'cooking',count:1},
+   {id:'t-eat',name:'Eating apples',type:'apple',count:3},
+   {id:'t-cherry',name:'Cherries',type:'cherry',count:2},
+   {id:'t-damson',name:'Damsons',type:'damson',count:2},
+   {id:'t-kiwi',name:'Kiwi vine',type:'kiwi',count:1},
+   {id:'t-rhubarb',name:'Rhubarb patch',type:'rhubarb',count:1}
+  ],
+  done:{'t-cherry:prune':['2026-08-29'],'t-damson:prune':['2026-08-29']}
+ };
+}
+function load(){try{const s=localStorage.getItem(LS);if(s){const o=JSON.parse(s);if(o&&o.log&&o.trees)return o;}}catch(e){}return null;}
+function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
+let S=load()||defaults();save();
+const _t=new Date();
+let view={y:_t.getFullYear(),m:_t.getMonth()+1,tab:'month'};
+
+/* ---------- helpers ---------- */
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+const fmt=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+const fmtY=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+const today=()=>{const d=new Date();d.setHours(0,0,0,0);return d;};
+const crop=id=>CROPS.find(c=>c.id===id);
+const has=(a,m)=>(a||[]).includes(m);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isCurrent=()=>{const t=new Date();return view.y===t.getFullYear()&&view.m===t.getMonth()+1;};
+const monthStart=()=>new Date(view.y,view.m-1,1);
+const monthEnd=()=>new Date(view.y,view.m,0);
+const refDate=()=>isCurrent()?today():new Date(view.y,view.m-1,15);
+function ml(arr){if(!arr||!arr.length)return'';const s=new Set(arr);if(s.size===12)return'All year';const o=[];
+ for(let m=1;m<=12;m++){const p=m===1?12:m-1;if(s.has(m)&&!s.has(p)){let e=m;while(s.has(e%12+1)&&e%12+1!==m)e=e%12+1;o.push(e===m?MONTHS[m-1]:MONTHS[m-1]+'–'+MONTHS[e-1]);}}return o.join(', ');}
+const METHOD={sown:'Sown outdoors',cover:'Sown under cover',planted:'Planted out'};
+
+/* ---------- harvest estimates ---------- */
+function est(e){
+ const c=crop(e.crop);if(!c)return null;
+ let base=parse(e.date),days=c.d;
+ if(e.method==='planted')days=c.pd||Math.round(c.d*.7);
+ else if(e.method==='cover'&&e.planted){base=parse(e.planted);days=c.pd||Math.round(c.d*.7);}
+ const m=base.getMonth()+1;
+ if(days<=100){if([8,9,10].includes(m))days=Math.round(days*1.4);else if([11,12,1,2].includes(m))days=Math.round(days*1.6);}
+ let d=addDays(base,days);
+ for(let i=0;i<13&&!c.h.includes(d.getMonth()+1);i++)d=new Date(d.getFullYear(),d.getMonth()+1,1);
+ return {date:d,start:parse(e.date)};
+}
+function windowEnd(c,d){let x=new Date(d.getFullYear(),d.getMonth(),1),n=0;while(c.h.includes(x.getMonth()+1)&&n<12){x=new Date(x.getFullYear(),x.getMonth()+1,1);n++;}return addDays(x,-1);}
+function status(e){
+ const r=est(e);if(!r)return{t:'Unknown crop',cls:'muted',sub:'',pct:0};
+ if(e.status==='done')return{t:'Finished',cls:'muted',sub:'',pct:100,r};
+ const t=today(),end=windowEnd(crop(e.crop),r.date);
+ const pct=Math.max(0,Math.min(100,(t-r.start)/(r.date-r.start||1)*100));
+ if(t<r.date){const w=Math.ceil((r.date-t)/864e5/7);return{t:w<=3?'Ready soon':'Growing',cls:w<=3?'amber':'green',sub:'from ~'+fmtY(r.date)+' ('+w+' wk)',pct,r,end};}
+ if(t<=end)return{t:'Ready to harvest',cls:'amber',sub:'until ~'+fmtY(end),pct:100,r,end};
+ return{t:'Check – window passed',cls:'red',sub:'was due ~'+fmt(r.date),pct:100,r,end};
+}
+
+/* ---------- tasks ---------- */
+function allTasks(){
+ const out=GENERAL.map(g=>({...g,cat:'soil'}));
+ S.trees.forEach(tr=>{(TREE_TYPES[tr.type]?.tasks||[]).forEach(k=>out.push({id:tr.id+':'+k.k,t:k.t,d:k.d,m:k.m,cat:'tree',who:tr.name+(tr.count>1?' ×'+tr.count:''),k:k.k,tree:tr.id}));});
+ return out;
+}
+function lastDone(id){const h=S.done[id];return h&&h.length?parse(h[h.length-1]):null;}
+function isDone(t){const last=lastDone(t.id);if(!last||last>monthEnd())return null;return (refDate()-last)/864e5<t.m.length*31+10?last:null;}
+function plantOuts(){
+ return S.log.filter(e=>e.status!=='done'&&e.method==='cover'&&!e.planted&&crop(e.crop)?.pl).map(e=>({e,due:addDays(parse(e.date),crop(e.crop).po||35)}));
+}
+function suggestions(m){const g={out:[],in:[],pl:[]};CROPS.forEach(c=>{if(has(c.out,m))g.out.push(c);if(has(c.in,m))g.in.push(c);if(has(c.pl,m))g.pl.push(c);});return g;}
+
+/* ---------- views ---------- */
+function rMonth(){
+ const m=view.m,tasks=allTasks().filter(t=>t.m.includes(m));
+ tasks.sort((a,b)=>(!!isDone(a))-(!!isDone(b)));
+ const po=plantOuts().filter(p=>p.due<=monthEnd());
+ const active=S.log.filter(e=>e.status!=='done');
+ const lim=isCurrent()?addDays(today(),21):monthEnd();
+ const harvest=active.map(e=>({e,s:status(e)})).filter(x=>x.s.r&&x.s.r.date<=lim&&(isCurrent()||x.s.end>=monthStart()));
+ const pending=tasks.filter(t=>!isDone(t)).length+po.length;
+ const g=suggestions(m);
+ const loggedThisMonth=id=>S.log.find(e=>e.crop===id&&parse(e.date)>=monthStart()&&parse(e.date)<=monthEnd());
+ const growing=id=>active.some(e=>e.crop===id);
+ const sug=(list,method,btn)=>list.length?list.map(c=>{const l=loggedThisMonth(c.id);return `<div class="sug"><div><b>${esc(c.n)}</b> <span class="fam">${c.f}</span>${l?`<span class="badge">✓ logged ${fmt(parse(l.date))}</span>`:growing(c.id)?'<span class="badge">growing</span>':''}
+  <div class="note">${c.note?esc(c.note)+' · ':''}Harvest ${ml(c.h)}</div></div>
+  <button class="btn ${l?'ghost':''} sm" data-act="log" data-crop="${c.id}" data-method="${method}">${l?'+ again':btn}</button></div>`}).join(''):'<div class="empty">Nothing this month.</div>';
+ return `
+ <div class="card tip">🌦️ <b>${MONTH_FULL[m-1]}:</b> ${TIPS[m]}</div>
+ <div class="stats"><div class="stat"><b>${active.length}</b><span>crops in</span></div><div class="stat"><b>${harvest.length}</b><span>${isCurrent()?'ready / soon':'to harvest'}</span></div><div class="stat"><b>${pending}</b><span>jobs to do</span></div></div>
+ <div class="card"><h2>Jobs – trees, soil & manure</h2>
+  ${po.map(p=>`<div class="job"><div style="flex:1"><b>Plant out ${esc(crop(p.e.crop).n)}</b><span class="who po">due ${fmt(p.due)}</span><div class="note">Sown under cover ${fmt(parse(p.e.date))}. Harden off for a week first.</div></div><button class="btn sm" data-act="planted" data-id="${p.e.id}">Planted</button></div>`).join('')}
+  ${tasks.map(t=>{const d=isDone(t);return `<label class="job ${d?'done':''}"><input type="checkbox" data-act="task" data-id="${t.id}" ${d?'checked':''}><div><b>${esc(t.t)}</b><span class="who ${t.cat==='soil'?'soil':''}">${t.cat==='soil'?'Plot':esc(t.who)}</span><div class="note">${esc(t.d)}${d?` · <b>Done ${fmt(d)}</b>`:''}</div></div></label>`}).join('')||'<div class="empty">No jobs.</div>'}
+ </div>
+ <div class="card"><h2>${isCurrent()?'Ready to harvest (next 3 weeks)':'Harvesting this month'}</h2>
+  ${harvest.map(x=>`<div class="sug"><div><b>${esc(crop(x.e.crop).n)}</b>${x.e.note?` <span class="fam">${esc(x.e.note)}</span>`:''}<div class="note">${x.s.sub}</div></div><span class="pill ${x.s.cls}">${x.s.t}</span></div>`).join('')||'<div class="empty">Nothing due yet – see My plot for estimates.</div>'}
+ </div>
+ <div class="card"><h2>What to sow & plant</h2>
+  <h3>Sow / plant outdoors</h3>${sug(g.out,'sown','✓ Sown')}
+  <h3>Sow under cover / greenhouse</h3>${sug(g.in,'cover','✓ Sown')}
+  <h3>Plant out</h3>${sug(g.pl,'planted','✓ Planted')}
+ </div>`;
+}
+function entryHTML(e){
+ const c=crop(e.crop),s=status(e);
+ return `<div class="entry"><div class="top"><b>${esc(c?c.n:e.crop)}${e.note?` <span class="fam">${esc(e.note)}</span>`:''}</b><span class="pill ${s.cls}">${s.t}</span></div>
+ <div class="note">${METHOD[e.method]} ${fmtY(parse(e.date))}${e.planted?' · planted out '+fmt(parse(e.planted)):''}${e.bed?' · '+esc(e.bed):''}</div>
+ ${e.status!=='done'?`<div class="bar"><span style="width:${s.pct}%"></span></div><div class="note">Harvest ${s.sub}${c&&c.note?' · '+esc(c.note):''}</div>`:''}
+ <div class="acts">${e.status!=='done'?`${e.method==='cover'&&!e.planted&&c&&c.pl?`<button class="btn sm" data-act="planted" data-id="${e.id}">Planted out today</button>`:''}<button class="btn ghost sm" data-act="edit" data-id="${e.id}">Edit</button><button class="btn ghost sm" data-act="finish" data-id="${e.id}">Finished / cleared</button>`:`<button class="btn ghost sm" data-act="reopen" data-id="${e.id}">Undo</button>`}<button class="btn warn sm" data-act="del" data-id="${e.id}">Delete</button></div></div>`;
+}
+function rPlot(){
+ const act=S.log.filter(e=>e.status!=='done').sort((a,b)=>(status(a).r?.date||0)-(status(b).r?.date||0));
+ const fin=S.log.filter(e=>e.status==='done').sort((a,b)=>b.date.localeCompare(a.date));
+ return `<div class="card"><h2>In the ground (${act.length}) <button class="btn sm" data-act="log">+ Log sowing</button></h2>
+ <div class="note" style="margin-bottom:6px">Sorted by estimated harvest. Estimates allow for slower autumn/winter growth – treat as a guide.</div>
+ ${act.map(entryHTML).join('')||'<div class="empty">Nothing logged yet.</div>'}</div>
+ <div class="card"><details><summary>Finished (${fin.length})</summary>${fin.map(entryHTML).join('')||'<div class="empty">None yet.</div>'}</details></div>`;
+}
+function rTrees(){
+ const cm=new Date().getMonth()+1;
+ const until=t=>Math.min(...t.m.map(x=>(x-cm+12)%12));
+ const lastOf=(tr,match)=>{let best=null;Object.keys(S.done).forEach(k=>{if(k.startsWith(tr.id+':')&&match(k.split(':')[1])){const d=lastDone(k);if(d&&(!best||d>best))best=d;}});return best?fmtY(best):'—';};
+ const opts=Object.entries(TREE_TYPES).map(([k,v])=>`<option value="${k}">${v.label}</option>`).join('');
+ return `<div class="card"><h2>Trees & perennials</h2>
+ ${S.trees.map(tr=>{const ts=allTasks().filter(t=>t.tree===tr.id);
+  const nxt=ts.map(t=>({t,u:until(t)})).filter(x=>!(x.u===0&&isDoneNow(x.t))).sort((a,b)=>a.u-b.u).slice(0,3);
+  return `<div class="tree"><div class="top" style="display:flex;justify-content:space-between;gap:8px"><b>${esc(tr.name)}${tr.count>1?' ×'+tr.count:''}</b><span class="fam">${TREE_TYPES[tr.type]?.label||tr.type}</span></div>
+  <div class="kv"><div><span>Last pruned</span>${lastOf(tr,k=>k.includes('prune'))}</div><div><span>Last manured</span>${lastOf(tr,k=>k==='mulch')}</div><div><span>Last fed</span>${lastOf(tr,k=>k==='feed')}</div></div>
+  <div class="note">Next: ${nxt.map(x=>`<b>${esc(x.t.t)}</b> (${x.u===0?'now':MONTHS[x.t.m.find(mm=>(mm-cm+12)%12===x.u)-1]})`).join(' · ')}</div>
+  <div class="acts">${ts.some(t=>t.k.includes('prune'))?`<button class="btn sm" data-act="tree-log" data-id="${tr.id}" data-kind="prune">Pruned today</button>`:''}${ts.some(t=>t.k==='mulch')?`<button class="btn ghost sm" data-act="tree-log" data-id="${tr.id}" data-kind="mulch">Manured today</button>`:''}${ts.some(t=>t.k==='feed')?`<button class="btn ghost sm" data-act="tree-log" data-id="${tr.id}" data-kind="feed">Fed today</button>`:''}<button class="btn warn sm" data-act="tree-del" data-id="${tr.id}">Remove</button></div></div>`}).join('')}
+ </div>
+ <div class="card"><h2>Add a tree or perennial</h2><div class="row"><label class="f">Name<input id="tName" placeholder="e.g. Victoria plum"></label><label class="f">Type<select id="tType">${opts}</select></label><label class="f" style="max-width:90px">How many<input id="tCount" type="number" min="1" value="1"></label></div><button class="btn" data-act="tree-add">Add</button></div>
+ <div class="card tip">✂️ <b>Pruning rule of thumb:</b> apples & pears in winter (dormant) plus a light summer trim; cherries, damsons & plums <b>only in summer</b> – winter cuts let in silver leaf.</div>`;
+}
+function isDoneNow(t){const last=lastDone(t.id);return last&&(today()-last)/864e5<t.m.length*31+10;}
+function rCal(){
+ return `<div class="card"><h2>Year calendar</h2>
+ <div class="legend"><span><i class="i-in"></i>Sow under cover</span><span><i class="i-out"></i>Sow outdoors</span><span><i class="i-pl"></i>Plant out</span><span><i class="i-h"></i>Harvest</span></div>
+ <input id="calSearch" placeholder="Filter crops…" style="margin-bottom:10px">
+ <div class="calwrap"><table class="cal"><thead><tr><th>Crop</th>${MONTHS.map((x,i)=>`<th class="${i+1===view.m?'cur':''}">${x[0]}</th>`).join('')}</tr></thead><tbody>
+ ${CROPS.map(c=>`<tr data-name="${esc((c.n+' '+c.f).toLowerCase())}"><td>${esc(c.n)}</td>${MONTHS.map((x,i)=>{const m=i+1;return `<td class="${m===view.m?'cur':''}"><div class="bars">${has(c.in,m)?'<i class="i-in"></i>':''}${has(c.out,m)?'<i class="i-out"></i>':''}${has(c.pl,m)?'<i class="i-pl"></i>':''}${has(c.h,m)?'<i class="i-h"></i>':''}</div></td>`}).join('')}</tr>`).join('')}
+ </tbody></table></div></div>`;
+}
+function rMore(){
+ return `<div class="card"><h2>Phone reminders</h2><p class="note">Download a calendar file with a monthly “jobs & sowing” reminder (first Saturday of each month, 9am) for the next 12 months, plus harvest checks and plant-out dates for what you’ve logged. Open it on your phone to add to Google/Apple Calendar. Re-download after logging new sowings.</p><button class="btn" data-act="ics">Download reminders (.ics)</button></div>
+ <div class="card"><h2>Backup</h2><p class="note">Your data is saved in this browser only. Export a backup now and then – and import it to move to another phone or computer.</p><div class="acts"><button class="btn" data-act="export">Export backup</button><button class="btn ghost" data-act="import">Import backup</button></div></div>
+ <div class="card"><h2>Reset</h2><p class="note">Wipes everything and restores the starting data.</p><button class="btn warn" data-act="reset">Reset all data</button></div>`;
+}
+function render(){
+ document.getElementById('mlabel').textContent=MONTH_FULL[view.m-1]+' '+view.y;
+ document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===view.tab));
+ const f={month:rMonth,plot:rPlot,trees:rTrees,cal:rCal,more:rMore}[view.tab];
+ document.getElementById('main').innerHTML=f();
+ const cs=document.getElementById('calSearch');
+ if(cs)cs.addEventListener('input',()=>{const q=cs.value.toLowerCase();document.querySelectorAll('.cal tbody tr').forEach(r=>r.style.display=r.dataset.name.includes(q)?'':'none');});
+}
+
+/* ---------- modal ---------- */
+let editing=null;
+const $=id=>document.getElementById(id);
+$('mCrop').innerHTML=CROPS.map(c=>`<option value="${c.id}">${esc(c.n)}</option>`).join('');
+function openModal(e,cropId,method){
+ editing=e?e.id:null;
+ $('mTitle').textContent=e?'Edit entry':'Log sowing / planting';
+ $('mCrop').value=e?e.crop:(cropId||CROPS[0].id);
+ $('mDate').value=e?e.date:iso(isCurrent()?today():new Date(view.y,view.m-1,15));
+ $('mMethod').value=e?e.method:(method||'sown');
+ $('mBed').value=e?e.bed||'':'';$('mNote').value=e?e.note||'':'';
+ $('modal').classList.remove('hidden');
+}
+function closeModal(){$('modal').classList.add('hidden');}
+function saveModal(){
+ const v={crop:$('mCrop').value,date:$('mDate').value||iso(today()),method:$('mMethod').value,bed:$('mBed').value.trim(),note:$('mNote').value.trim()};
+ if(editing){const e=S.log.find(x=>x.id===editing);Object.assign(e,v);if(v.method!=='cover')delete e.planted;}
+ else S.log.push({id:uid(),...v,status:'growing'});
+ save();closeModal();render();
+}
+
+/* ---------- ICS ---------- */
+function buildICS(){
+ const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Allotment Planner//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:Allotment'];
+ const st=new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+ const ymd=d=>iso(d).replace(/-/g,'');
+ const e=s=>String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+ const ev=(id,d,sum,desc)=>L.push('BEGIN:VEVENT','UID:'+id+'@allotment-planner','DTSTAMP:'+st,'DTSTART:'+ymd(d)+'T090000','DTEND:'+ymd(d)+'T093000','SUMMARY:'+e(sum),'DESCRIPTION:'+e(desc),'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+e(sum),'TRIGGER:PT0M','END:VALARM','END:VEVENT');
+ const t=today(),tasks=allTasks();let n=0;
+ for(let i=0;i<=12&&n<12;i++){
+  const first=new Date(t.getFullYear(),t.getMonth()+i,1);let sat=new Date(first);while(sat.getDay()!==6)sat=addDays(sat,1);
+  if(sat<t)continue;n++;
+  const m=first.getMonth()+1,due=tasks.filter(x=>x.m.includes(m)),g=suggestions(m);
+  const desc=TIPS[m]+'\n\nJOBS:\n'+due.map(x=>'- '+x.t+(x.who?' ('+x.who+')':'')).join('\n')+'\n\nSOW OUTDOORS: '+(g.out.map(c=>c.n).join(', ')||'-')+'\nSOW UNDER COVER: '+(g.in.map(c=>c.n).join(', ')||'-')+'\nPLANT OUT: '+(g.pl.map(c=>c.n).join(', ')||'-');
+  ev('month-'+first.getFullYear()+'-'+m,sat,'Allotment: '+MONTH_FULL[m-1]+' jobs ('+due.length+')',desc);
+ }
+ S.log.filter(x=>x.status!=='done'&&crop(x.crop)).forEach(x=>{
+  const r=est(x),c=crop(x.crop);
+  if(r&&r.date>=t)ev('harvest-'+x.id,r.date,'Harvest check: '+c.n,'Estimated ready from about now ('+METHOD[x.method].toLowerCase()+' '+fmtY(parse(x.date))+').');
+  if(x.method==='cover'&&!x.planted&&c.pl){const d=addDays(parse(x.date),c.po||35);if(d>=t)ev('plantout-'+x.id,d,'Plant out: '+c.n,'Harden off for a week first.');}
+ });
+ L.push('END:VCALENDAR');
+ const fold=l=>{let o='';while(l.length>73){o+=l.slice(0,73)+'\r\n ';l=l.slice(73);}return o+l;};
+ return L.map(fold).join('\r\n');
+}
+function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+
+/* ---------- events ---------- */
+document.addEventListener('click',ev=>{
+ const b=ev.target.closest('[data-act]');if(!b||b.tagName==='INPUT')return;
+ const a=b.dataset.act,id=b.dataset.id,entry=id&&S.log.find(x=>x.id===id);
+ switch(a){
+  case 'prev':view.m--;if(view.m<1){view.m=12;view.y--;}break;
+  case 'next':view.m++;if(view.m>12){view.m=1;view.y++;}break;
+  case 'now':view.y=new Date().getFullYear();view.m=new Date().getMonth()+1;break;
+  case 'tab':view.tab=b.dataset.tab;break;
+  case 'log':openModal(null,b.dataset.crop,b.dataset.method);return;
+  case 'edit':openModal(entry);return;
+  case 'mclose':closeModal();return;
+  case 'msave':saveModal();return;
+  case 'finish':entry.status='done';entry.finished=iso(today());break;
+  case 'reopen':entry.status='growing';break;
+  case 'del':if(!confirm('Delete this entry?'))return;S.log=S.log.filter(x=>x.id!==id);break;
+  case 'planted':entry.planted=iso(today());break;
+  case 'tree-log':{const kind=b.dataset.kind,tr=S.trees.find(x=>x.id===id),ts=TREE_TYPES[tr.type].tasks,cm=new Date().getMonth()+1;
+   let k=kind;if(kind==='prune'){const pr=ts.filter(t=>t.k.includes('prune'));k=(pr.find(t=>t.m.includes(cm))||pr[0]).k;}
+   const key=id+':'+k;S.done[key]=(S.done[key]||[]).concat(iso(today()));break;}
+  case 'tree-del':if(!confirm('Remove this tree and its history?'))return;S.trees=S.trees.filter(x=>x.id!==id);Object.keys(S.done).forEach(k=>{if(k.startsWith(id+':'))delete S.done[k];});break;
+  case 'tree-add':{const name=$('tName').value.trim();if(!name){$('tName').focus();return;}S.trees.push({id:'t-'+uid(),name,type:$('tType').value,count:Math.max(1,+$('tCount').value||1)});break;}
+  case 'ics':download('allotment-reminders.ics',buildICS(),'text/calendar');return;
+  case 'export':download('allotment-backup-'+iso(today())+'.json',JSON.stringify(S,null,1),'application/json');return;
+  case 'import':$('importFile').click();return;
+  case 'reset':if(!confirm('Reset everything to the starting data?'))return;S=defaults();break;
+  default:return;
+ }
+ save();render();
+});
+document.addEventListener('change',ev=>{
+ const t=ev.target;
+ if(t.dataset&&t.dataset.act==='task'){const id=t.dataset.id;const h=S.done[id]||[];
+  if(t.checked)S.done[id]=h.concat(iso(today()));else{h.pop();if(h.length)S.done[id]=h;else delete S.done[id];}
+  save();render();}
+ if(t.id==='importFile'&&t.files[0]){const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.log||!o.trees)throw 0;o.done=o.done||{};S=o;save();render();alert('Backup imported.');}catch(e){alert('That file isn’t a valid backup.');}t.value='';};r.readAsText(t.files[0]);}
+});
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+render();
+</script>
+</body>
+</html>
