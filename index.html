@@ -395,7 +395,6 @@ function suggestions(m){const g={out:[],in:[],pl:[]};sortedCrops().forEach(c=>{i
 /* ---------- views ---------- */
 function rMonth(){
  const m=view.m,tasks=allTasks().filter(t=>t.m.includes(m));
- tasks.sort((a,b)=>(!!isDone(a))-(!!isDone(b)));
  const po=plantOuts().filter(p=>p.due<=monthEnd());
  const active=S.log.filter(e=>e.status!=='done');
  const lim=isCurrent()?addDays(today(),21):monthEnd();
@@ -603,7 +602,7 @@ document.addEventListener('click',ev=>{
 document.addEventListener('change',ev=>{
  const t=ev.target;
  if(t.dataset&&t.dataset.act==='task'){const id=t.dataset.id;const h=S.done[id]||[];
-  if(t.checked)S.done[id]=h.concat(iso(today()));else{h.pop();if(h.length)S.done[id]=h;else delete S.done[id];}
+  if(t.checked)S.done[id]=h.concat(iso(refDate())).sort();else{h.pop();if(h.length)S.done[id]=h;else delete S.done[id];}
   save();render();}
  if(t.id==='importFile'&&t.files[0]){const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result);if(!o.log||!o.trees)throw 0;o.done=o.done||{};S=o;save();render();alert('Backup imported.');}catch(e){alert('That file isn’t a valid backup.');}t.value='';};r.readAsText(t.files[0]);}
 });
